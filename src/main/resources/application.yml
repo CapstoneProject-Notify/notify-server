@@ -6,7 +6,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/notify
+    url: jdbc:mysql://localhost:3306/notify2
     username: root
     password: 19890422pkl!
 
