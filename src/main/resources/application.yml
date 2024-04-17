@@ -1,26 +1,19 @@
 spring:
-  servlet:
-    multipart:
-      maxFileSize: 10MB # 파일 하나의 최대 크기
-      maxRequestSize: 10MB  # 한 번에 최대 업로드 가능 용량
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/notify2
-    username: root
-    password: 19890422pkl!
-
-
+    url: jdbc:mysql://notify.cjugwca6utbp.ap-northeast-2.rds.amazonaws.com:3306/notify
+    username: admin
+    password: notify2024
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         globally_quoted_identifiers: true
         show_sql: true
         format_sql: true
-
 springdoc:
   packages-to-scan: com.example.notifyserver
   default-consumes-media-type: application/json;charset=UTF-8
