@@ -3,9 +3,10 @@ package com.example.notifyserver.scrap.service;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.user.domain.User;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public interface ScrapService {
     /**
      * 스크랩 목록에 해당 공지사항을 추가한다.
