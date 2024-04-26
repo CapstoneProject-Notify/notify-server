@@ -1,27 +1,29 @@
 package com.example.notifyserver.scrap.service;
 
+import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.scrap.domain.Scrap;
+import com.example.notifyserver.user.domain.User;
 
 import java.util.List;
 
 public interface ScrapService {
     /**
      * 스크랩 목록에 해당 공지사항을 추가한다.
-     * @param userId 스크랩을 요청한 유저의 ID
+     * @param user 스크랩을 요청한 유저
      * @param type 공지사항의 종류
-     * @param noticeId 스크랩할 공지사항의 ID
+     * @param notice 스크랩할 공지사항 객체
      * @return 스크랩한 공지사항의 ID
      */
-    long doScrap(long userId, String type, long noticeId);
+    long doScrap(User user, String type, Notice notice);
 
     /**
      * 스크랩 목록에서 해당 스크랩을 제거한다.
-     * @param userId 스크랩 제거를 요청한 유저의 ID
+     * @param user 스크랩 제거를 요청한 유저
      * @param type 공지사항의 종류
-     * @param noticeId 스크랩에서 제거할 공지사항의 ID
+     * @param notice 스크랩에서 제거할 공지사항 객체
      * @return 제거한 공지사항의 ID
      */
-    long deleteScrap(long userId, String type, long noticeId);
+    long deleteScrap(User user, String type, Notice notice);
 
     /**
      * 스크랩 목록에서 해당 페이지의 스크랩을 조회한다.
