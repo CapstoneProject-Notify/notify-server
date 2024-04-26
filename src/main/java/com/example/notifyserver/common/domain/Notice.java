@@ -26,6 +26,7 @@ public class Notice extends BaseTimeEntity{
     private String noticeUrl;
 
     @NotNull
-    private String noticeType;
+    @Enumerated(EnumType.STRING)
+    private NoticeType noticeType;
 
 }
