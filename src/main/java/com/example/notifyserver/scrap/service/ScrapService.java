@@ -20,9 +20,8 @@ public interface ScrapService {
      * 스크랩 목록에서 해당 스크랩을 제거한다.
      * @param user 스크랩 제거를 요청한 유저
      * @param notice 스크랩에서 제거할 공지사항 객체
-     * @return 제거한 공지사항의 스크랩 ID
      */
-    long deleteScrap(User user, Notice notice);
+    void deleteScrap(User user, Notice notice);
 
     /**
      * 스크랩 목록에서 해당 페이지의 스크랩을 조회한다.

@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class ScrapServiceImpl implements ScrapService{
 
+    @Autowired
     private ScrapRepository scrapRepository;
 
     /**
@@ -31,11 +32,13 @@ public class ScrapServiceImpl implements ScrapService{
      * 스크랩 목록에서 해당 스크랩을 제거한다.
      * @param user 스크랩 제거를 요청한 유저
      * @param notice 스크랩에서 제거할 공지사항 객체
-     * @return 제거한 공지사항의 스크랩 ID
      */
     @Override
-    public long deleteScrap(User user, Notice notice) {
-        return 0;
+    public void deleteScrap(User user, Notice notice) {
+        Long userId = user.getUserId();
+        Long noticeId = notice.getNoticeId();
+        NoticeType noticeType = notice.getNoticeType();
+        scrapRepository.deleteByUserIdAndNoticeIdAndType(userId, noticeId, noticeType);
     }
 
     /**
