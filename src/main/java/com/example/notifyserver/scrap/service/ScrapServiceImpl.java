@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class ScrapServiceImpl implements ScrapService{
 
+    @Autowired
     private ScrapRepository scrapRepository;
 
     /**
