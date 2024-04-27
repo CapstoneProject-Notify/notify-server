@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +44,42 @@ class ScrapServiceImplTest {
         assertThat(scrappedNotice.getScrapId()).isEqualTo(findId);
     }
 
+
+    @Test
+    public void deleteScrap() throws Exception{
+        //given
+        Bundle bundle = getBundle();
+        em.persist(bundle.user());
+        em.persist(bundle.notice());
+        scrapService.doScrap(bundle.user, bundle.notice);
+        int size = scrapRepository.findAll().size();
+
+        //when
+        scrapService.deleteScrap(bundle.user, bundle.notice);
+
+        //then
+        assertEquals(size-1, scrapRepository.findAll().size());
+    }
+
+    @Test
+    public void getScrap() throws Exception{
+        //given
+        Bundle bundle = getBundle();
+        em.persist(bundle.user());
+        em.persist(bundle.notice());
+        long scrapedId = scrapService.doScrap(bundle.user, bundle.notice);
+
+        //when
+        Page<Scrap> scraps = scrapService.getScrap(bundle.user.getUserId(), 1);
+        for (Scrap scrap : scraps) {
+            assertThat(scrap.getScrapId()).isEqualTo(scrapedId);
+        }
+
+        //then
+        assertThat(scraps.getTotalElements()).isEqualTo(1);
+        assertThat(scraps.getTotalPages()).isEqualTo(1);
+    }
+
     @NotNull
     private static Bundle getBundle() {
         User user = User.builder()
@@ -57,26 +94,9 @@ class ScrapServiceImplTest {
                 .noticeType(NoticeType.COM)
                 .noticeUrl("공지 url")
                 .build();
-        Bundle bundle = new Bundle(user, notice);
-        return bundle;
+        return new Bundle(user, notice);
     }
 
     private record Bundle(User user, Notice notice) {
-    }
-
-    @Test
-    public void deleteScrap() throws Exception{
-        //given
-        Bundle bundle = getBundle();
-        em.persist(bundle.user());
-        em.persist(bundle.notice());
-        scrapService.doScrap(bundle.user, bundle.notice);
-        int size = scrapRepository.findAll().size();
-
-        //when
-        scrapService.deleteScrap(bundle.user, bundle.notice);
-        
-        //then
-        assertEquals(size-1, scrapRepository.findAll().size());
     }
 }
