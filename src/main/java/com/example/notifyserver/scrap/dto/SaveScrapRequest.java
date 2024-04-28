@@ -11,7 +11,7 @@ public record SaveScrapRequest(
     @Enumerated(EnumType.STRING)
     NoticeType type,
     @NotNull
-    long userId,
+    String googleId,
     @NotNull
     long noticeId) {
 }

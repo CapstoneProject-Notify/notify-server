@@ -11,7 +11,7 @@ public record DeleteScrapRequest(
     @Enumerated(EnumType.STRING)
     NoticeType type,
     @NotNull
-    long userId,
+    String googleId,
     @NotNull
     long noticeId) {
 }

@@ -1,25 +1,35 @@
 package com.example.notifyserver.scrap.controller;
 
+import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.dto.ErrorResponse;
 import com.example.notifyserver.common.dto.Response;
 import com.example.notifyserver.common.dto.SuccessNonDataResponse;
+import com.example.notifyserver.common.dto.SuccessResponse;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.common.repository.NoticeRepository;
+import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.scrap.dto.DeleteScrapRequest;
+import com.example.notifyserver.scrap.dto.GetScrapsResponse;
 import com.example.notifyserver.scrap.dto.SaveScrapRequest;
 import com.example.notifyserver.scrap.service.ScrapService;
 import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/scrap")
 @RequiredArgsConstructor
+@Slf4j
 public class ScrapController {
 
     private final ScrapService scrapService;
@@ -34,7 +44,7 @@ public class ScrapController {
     @PostMapping
     public SuccessNonDataResponse saveScrap(@RequestBody SaveScrapRequest request){
 
-        User findUser = userRepository.findById(request.userId())
+        User findUser = userRepository.findUserByGoogleId(request.googleId())
                 .orElseThrow(() -> new NotFoundUserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
         Notice findNotice = noticeRepository.findById(request.noticeId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION));
@@ -56,7 +66,7 @@ public class ScrapController {
     @DeleteMapping
     public Response deleteScrap(@RequestBody DeleteScrapRequest request){
 
-        User findUser = userRepository.findById(request.userId())
+        User findUser = userRepository.findUserByGoogleId(request.googleId())
                 .orElseThrow(() -> new NotFoundUserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
         Notice findNotice = noticeRepository.findById(request.noticeId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION));

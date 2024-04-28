@@ -4,6 +4,7 @@ import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.user.domain.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,5 +31,5 @@ public interface ScrapService {
      * @param pageNum 조회 페이지 번호
      * @return 페이지 번호에 해당하는 스크랩들
      */
-    Page<Scrap> getScrap(long userId, long pageNum);
+    Page<Scrap> getScrap(User user, PageRequest pageRequest);
 }
