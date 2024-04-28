@@ -47,4 +47,25 @@ public class ScrapController {
 
         return SuccessNonDataResponse.success(SuccessCode.SAVE_SCRAP_SUCCESS);
     }
+
+    /**
+     * 스크랩을 제거
+     * @param request 사용자로부터 받은 RequestBody
+     * @return 성공 코드
+     */
+    @DeleteMapping
+    public Response deleteScrap(@RequestBody DeleteScrapRequest request){
+
+        User findUser = userRepository.findById(request.userId())
+                .orElseThrow(() -> new NotFoundUserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+        Notice findNotice = noticeRepository.findById(request.noticeId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION));
+
+        try {
+            scrapService.deleteScrap(findUser, findNotice);
+            return SuccessNonDataResponse.success(SuccessCode.DELETE_SCRAP_SUCCESS);
+        }catch (Exception e) {
+            return ErrorResponse.error(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION);
+        }
+    }
 }
