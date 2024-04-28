@@ -3,7 +3,6 @@ package com.example.notifyserver.user.controller;
 import com.example.notifyserver.common.dto.ApiResponse;
 import com.example.notifyserver.common.dto.ErrorResponse;
 import com.example.notifyserver.common.dto.SuccessNonDataResponse;
-import com.example.notifyserver.common.dto.SuccessResponse;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
