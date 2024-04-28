@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ErrorResponse {
+public class ErrorResponse extends ApiResponse{
     private final int code;
     private final String message;
 
