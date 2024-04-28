@@ -96,8 +96,8 @@ public class GlobalControllerExceptionAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundUserException.class)
-    protected ErrorDataResponse<TokenPair> handleNotFoundUserException(final NotFoundUserException e) {
-        return ErrorDataResponse.error(e.getErrorCode(), e.getTokenPair());
+    protected ErrorResponse handleNotFoundUserException(final NotFoundUserException e) {
+        return ErrorResponse.error(e.getErrorCode());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
