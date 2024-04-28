@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://notify.cjugwca6utbp.ap-northeast-2.rds.amazonaws.com:3306/notify
-    username: admin
-    password: notify2024
+    url: jdbc:mysql://localhost:3306/realnotify
+    username: root
+    password: 19890422pkl!
   jpa:
     show-sql: true
     hibernate:

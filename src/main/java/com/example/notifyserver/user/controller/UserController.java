@@ -7,12 +7,10 @@ import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.user.dto.request.LoginRequest;
+import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +29,14 @@ public class UserController {
         } catch (Exception e) {
             return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
         }
+    }
+
+    @PostMapping("/register")
+    public ApiResponse userRegister(@RequestHeader("googleId") String googleId, @RequestBody RegisterRequest request){
+
+        userService.userRegister(request, googleId);
+        return SuccessNonDataResponse.success(SuccessCode.REGISTER_SUCCESS);
+
     }
 }
 

@@ -10,7 +10,8 @@ public enum SuccessCode {
 
 
     LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공입니다."),
-    LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공입니다");
+    LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공입니다"),
+    REGISTER_SUCCESS(HttpStatus.OK, "회원가입 성공");
 
     private final HttpStatus httpStatus;
     private final String message;
