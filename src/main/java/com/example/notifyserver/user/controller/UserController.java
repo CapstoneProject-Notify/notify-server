@@ -33,9 +33,14 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse userRegister(@RequestHeader("googleId") String googleId, @RequestBody RegisterRequest request){
-
-        userService.userRegister(request, googleId);
-        return SuccessNonDataResponse.success(SuccessCode.REGISTER_SUCCESS);
+        try {
+            userService.userRegister(request, googleId);
+            return SuccessNonDataResponse.success(SuccessCode.REGISTER_SUCCESS);
+        } catch (NotFoundUserException e) {
+            return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
+        } catch (Exception e) {
+            return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
 
     }
 }

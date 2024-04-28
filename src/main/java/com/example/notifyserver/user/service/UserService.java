@@ -33,8 +33,9 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void userRegister(final RegisterRequest request, final String googleId){
-        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_EXCEPTION));
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
         user.update(request.nickname(), request.email(), request.userMajor());
     }
 }
