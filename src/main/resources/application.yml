@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/realnotify
-    username: root
-    password: 19890422pkl!
+    url: jdbc:mysql://notify.cjugwca6utbp.ap-northeast-2.rds.amazonaws.com:3306/notify
+    username: admin
+    password: notify2024
   jpa:
     show-sql: true
     hibernate:
@@ -14,12 +14,7 @@ spring:
         globally_quoted_identifiers: true
         show_sql: true
         format_sql: true
-  data:
-    redis:
-      port: 6379
-      host: localhost
-      repositories:
-        enabled: false
+
 
 springdoc:
   packages-to-scan: com.example.notifyserver
