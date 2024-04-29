@@ -2,10 +2,7 @@ package com.example.notifyserver.scrap.controller;
 
 import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
-import com.example.notifyserver.common.dto.ErrorResponse;
-import com.example.notifyserver.common.dto.Response;
-import com.example.notifyserver.common.dto.SuccessNonDataResponse;
-import com.example.notifyserver.common.dto.SuccessResponse;
+import com.example.notifyserver.common.dto.*;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundException;
@@ -25,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -44,10 +43,10 @@ public class ScrapController {
      * @return 성공 코드
      */
     @PostMapping
-    public SuccessNonDataResponse saveScrap(@RequestBody SaveScrapRequest request){
+    public ApiResponse saveScrap(@RequestBody SaveScrapRequest request){
 
-        User findUser = userRepository.findUserByGoogleId(request.googleId())
-                .orElseThrow(() -> new NotFoundUserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+        User findUser = userRepository.findByGoogleId(request.googleId())
+                .orElseThrow(() -> new NotFoundUserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
         Notice findNotice = noticeRepository.findById(request.noticeId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION));
 
@@ -66,10 +65,10 @@ public class ScrapController {
      * @return 성공 코드
      */
     @DeleteMapping
-    public Response deleteScrap(@RequestBody DeleteScrapRequest request){
+    public ApiResponse deleteScrap(@RequestBody DeleteScrapRequest request){
 
-        User findUser = userRepository.findUserByGoogleId(request.googleId())
-                .orElseThrow(() -> new NotFoundUserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+        User findUser = userRepository.findByGoogleId(request.googleId())
+                .orElseThrow(() -> new NotFoundUserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
         Notice findNotice = noticeRepository.findById(request.noticeId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION));
 
@@ -88,10 +87,10 @@ public class ScrapController {
      * @return 성공 코드, 스크랩 정보 , 페이지 정보
      */
     @GetMapping
-    public Response getScraps(@RequestHeader("googleId") String googleId, @RequestParam("page") long pageNum){
+    public ApiResponse getScraps(@RequestHeader("googleId") String googleId, @RequestParam("page") long pageNum){
 
-        User findUser = userRepository.findUserByGoogleId(googleId)
-                .orElseThrow(() -> new NotFoundUserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+        User findUser = userRepository.findByGoogleId(googleId)
+                .orElseThrow(() -> new NotFoundUserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
         PageRequest pageRequest = PageRequest.of((int) pageNum, (int) NoticeConstants.PAGE_SIZE);
 
         try {
@@ -108,6 +107,16 @@ public class ScrapController {
         }
     }
 
+
+    /**
+     * 날짜를 API 스펙 형태로 변환
+     * @param date 날짜
+     * @return API 스펙 형태의 날짜
+     */
+    public static String dateToString(Date date){
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
     /**
      * DB에서 가져온 스크랩을 API 형식에 맞게 변환해주는 메서드
      * @param scrapList DB에서 가져온 스크랩
@@ -118,8 +127,9 @@ public class ScrapController {
         for(Scrap s : scrapList){
             list.add(
                     NoticeResponse.builder()
-                            .scrapId(s.getScrapId())
+                            .noticeId(s.getNotice().getNoticeId())
                             .title(s.getNotice().getNoticeTitle())
+                            .noticeDate(dateToString(s.getNotice().getNoticeDate()))
                             .url(s.getNotice().getNoticeUrl())
                             .isScrapped(true)
                             .build()

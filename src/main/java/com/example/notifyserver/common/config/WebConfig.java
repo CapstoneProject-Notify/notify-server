@@ -11,9 +11,6 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-//    private final UserResolver userResolver;
-//    private final googleCodeResolver googleCodeResolver;
-
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
         registry.addMapping("/**")
@@ -23,11 +20,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(3000);
     }
-
-//    @Override
-//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-//        resolvers.add(userResolver);
-//        resolvers.add(kakaoCodeResolver);
-//
-//    }
 }

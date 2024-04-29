@@ -1,8 +1,6 @@
 package com.example.notifyserver.common.exception;
 
-import com.example.notifyserver.common.dto.ErrorDataResponse;
 import com.example.notifyserver.common.dto.ErrorResponse;
-import com.example.notifyserver.common.dto.TokenPair;
 import com.example.notifyserver.common.exception.model.*;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import lombok.extern.slf4j.Slf4j;
@@ -91,12 +89,6 @@ public class GlobalControllerExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     protected ErrorResponse handleNotFoundException(final NotFoundException e) {
-        return ErrorResponse.error(e.getErrorCode());
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundUserException.class)
-    protected ErrorResponse handleNotFoundUserException(final NotFoundUserException e) {
         return ErrorResponse.error(e.getErrorCode());
     }
 

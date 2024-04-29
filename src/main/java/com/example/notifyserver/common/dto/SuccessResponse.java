@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SuccessResponse<T> extends Response{
+public class SuccessResponse<T> extends ApiResponse{
     private final int code;
     private final String message;
     private final T data;

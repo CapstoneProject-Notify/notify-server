@@ -12,23 +12,23 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @NotNull
+
     private String googleId;
 
-    @NotNull
+
     private String nickName;
 
-    @NotNull
+
     private String email;
 
-    @NotNull
+
     private String userMajor;
 }

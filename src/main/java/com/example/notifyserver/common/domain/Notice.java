@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,6 +25,10 @@ public class Notice extends BaseTimeEntity{
 
     @NotNull
     private String noticeUrl;
+
+    @NotNull
+    private Date noticeDate;
+
 
     @NotNull
     @Enumerated(EnumType.STRING)
