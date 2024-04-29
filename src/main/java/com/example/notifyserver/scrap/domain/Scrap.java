@@ -27,7 +27,9 @@ public class Scrap {
     @NotNull
     private Notice notice;
 
-
-
+    public Scrap(User user, Notice notice){
+        this.user = user;
+        this.notice = notice;
+    }
 
 }
