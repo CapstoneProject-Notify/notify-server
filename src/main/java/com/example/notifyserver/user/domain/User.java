@@ -1,9 +1,6 @@
 package com.example.notifyserver.user.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,10 +25,10 @@ public class User {
 
     private String email;
 
+    @Enumerated(value = EnumType.STRING)
+    private UserMajor userMajor;
 
-    private String userMajor;
-
-    public void update(String nickName, String email, String userMajor){
+    public void update(String nickName, String email, UserMajor userMajor){
         this.nickName = nickName;
         this.email = email;
         this.userMajor = userMajor;

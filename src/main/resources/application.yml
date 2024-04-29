@@ -27,5 +27,3 @@ springdoc:
   cache:
     disabled: true
 
-jwt:
-  secret: 63ca2f8d5786f90082f1168b058cf1efc695219fe1a14cf4499b3d13f799480707cf087094b2cd02e0bf74af124e1127a5420e581859da1bce65b1e68dc943cf
