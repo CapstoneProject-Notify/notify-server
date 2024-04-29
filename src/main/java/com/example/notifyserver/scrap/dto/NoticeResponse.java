@@ -7,8 +7,9 @@ import lombok.Setter;
 
 @Builder @Getter @Setter
 public class NoticeResponse {
-    long scrapId;
+    long noticeId;
     String title;
+    String noticeDate;
     String url;
     boolean isScrapped;
     

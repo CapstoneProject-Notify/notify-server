@@ -22,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -105,6 +107,16 @@ public class ScrapController {
         }
     }
 
+
+    /**
+     * 날짜를 API 스펙 형태로 변환
+     * @param date 날짜
+     * @return API 스펙 형태의 날짜
+     */
+    public static String dateToString(Date date){
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
     /**
      * DB에서 가져온 스크랩을 API 형식에 맞게 변환해주는 메서드
      * @param scrapList DB에서 가져온 스크랩
@@ -115,8 +127,9 @@ public class ScrapController {
         for(Scrap s : scrapList){
             list.add(
                     NoticeResponse.builder()
-                            .scrapId(s.getScrapId())
+                            .noticeId(s.getNotice().getNoticeId())
                             .title(s.getNotice().getNoticeTitle())
+                            .noticeDate(dateToString(s.getNotice().getNoticeDate()))
                             .url(s.getNotice().getNoticeUrl())
                             .isScrapped(true)
                             .build()
