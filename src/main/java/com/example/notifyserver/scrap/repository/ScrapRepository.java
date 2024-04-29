@@ -44,5 +44,5 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
      * @return 보여줄 스크랩들 및 페이지 정보
      */
     @Transactional
-    Page<Scrap> findAllByUserUserId(long userId, Pageable pageable);
+    Page<Scrap> findAllByUserUserIdOrderByNoticeDesc(long userId, Pageable pageable);
 }

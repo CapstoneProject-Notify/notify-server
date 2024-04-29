@@ -49,6 +49,6 @@ public class ScrapServiceImpl implements ScrapService{
      */
     @Override
     public Page<Scrap> getScrap(long userId, PageRequest pageRequest) {
-        return scrapRepository.findAllByUserUserId(userId, pageRequest);
+        return scrapRepository.findAllByUserUserIdOrderByNoticeDesc(userId, pageRequest);
     }
 }
