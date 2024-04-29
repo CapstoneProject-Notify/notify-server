@@ -34,4 +34,8 @@ public enum NoticeType {
         throw new IllegalArgumentException("주어진 문자열 [" + text +  "] 과 일치하는 타입이 존재하지 않습니다.");
     }
 
+
 }
+
+
+

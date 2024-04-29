@@ -1,7 +1,7 @@
 package com.example.notifyserver.common.exception.model;
 
-
 import com.example.notifyserver.common.exception.enums.ErrorCode;
+
 import lombok.Getter;
 
 @Getter
