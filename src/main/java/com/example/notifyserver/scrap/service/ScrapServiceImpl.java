@@ -6,9 +6,9 @@ import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.scrap.repository.ScrapRepository;
 import com.example.notifyserver.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 @Service
 public class ScrapServiceImpl implements ScrapService{
 
@@ -44,11 +44,11 @@ public class ScrapServiceImpl implements ScrapService{
     /**
      * 스크랩 목록에서 해당 페이지의 스크랩을 조회한다.
      * @param userId 스크랩 조회를 요청한 유저의 ID
-     * @param pageNum 조회 페이지 번호
-     * @return 페이지 번호에 해당하는 스크랩 리스트
+     * @param pageRequest 조회 페이지 정보
+     * @return 페이지 번호에 해당하는 스크랩들
      */
     @Override
-    public List<Scrap> getScrap(long userId, long pageNum) {
-        return null;
+    public Page<Scrap> getScrap(long userId, PageRequest pageRequest) {
+        return scrapRepository.findAllByUserUserIdOrderByNoticeDesc(userId, pageRequest);
     }
 }
