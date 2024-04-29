@@ -91,14 +91,16 @@ public class ScrapController {
 
         User findUser = userRepository.findByGoogleId(googleId)
                 .orElseThrow(() -> new NotFoundUserException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
-        PageRequest pageRequest = PageRequest.of((int) pageNum, (int) NoticeConstants.PAGE_SIZE);
+        // PageRequest에서는 시작이 0부터라서 -1을 실행
+        PageRequest pageRequest = PageRequest.of((int) pageNum-1, (int) NoticeConstants.PAGE_SIZE);
 
         try {
             Page<Scrap> result = scrapService.getScrap(findUser.getUserId(), pageRequest);
             List<Scrap> scrapList = result.getContent();
             GetScrapsResponse response = GetScrapsResponse.builder()
                     .totalPages(result.getTotalPages())
-                    .page(result.getNumber())
+                    // PageRequest에서는 시작이 0부터라서 +1을 실행
+                    .page(result.getNumber()+1)
                     .notices(scrapToNoticeResponse(scrapList))
                     .build();
             return SuccessResponse.success(SuccessCode.GET_SCRAP_SUCCESS,response);
