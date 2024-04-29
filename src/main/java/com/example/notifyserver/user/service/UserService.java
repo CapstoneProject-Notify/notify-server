@@ -4,6 +4,7 @@ import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.dto.request.LoginRequest;
+import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ public class UserService {
     }
 
     @Transactional
-    public void userRegister(final String googleId){
-        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND_EXCEPTION));
-
+    public void userRegister(final RegisterRequest request, final String googleId){
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
+        user.update(request.nickname(), request.email(), request.userMajor());
     }
 }
