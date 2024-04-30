@@ -30,6 +30,8 @@ public class UserService {
 
             userRepository.save(newUser);
             throw new NotFoundUserException(USER_NOT_FOUND_EXCEPTION);
+        } else if(findUser.get().getEmail() == null){
+            throw new NotFoundUserException(USER_NOT_FOUND_EXCEPTION);
         }
     }
 
