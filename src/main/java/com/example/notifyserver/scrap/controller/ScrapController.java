@@ -31,6 +31,7 @@ import java.util.List;
 @RequestMapping("/scrap")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "*", methods = RequestMethod.GET)
 public class ScrapController {
 
     private final ScrapService scrapService;
