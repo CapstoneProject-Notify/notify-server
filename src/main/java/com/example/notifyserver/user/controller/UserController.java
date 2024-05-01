@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mem")
-@CrossOrigin(origins = "*", methods = RequestMethod.POST)
 public class UserController {
 
     private final UserService userService;
