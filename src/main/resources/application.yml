@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://notify.cjugwca6utbp.ap-northeast-2.rds.amazonaws.com:3306/notify
+    username: ${{ secrets.DATABASE_USERNAME }}
+    password: ${{ secrets.DATABASE_PASSWORD }}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        globally_quoted_identifiers: true
+        show_sql: true
+        format_sql: true
+
+
+springdoc:
+  packages-to-scan: com.example.notifyserver
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
+  cache:
+    disabled: true
