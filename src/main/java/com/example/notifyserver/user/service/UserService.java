@@ -2,6 +2,10 @@ package com.example.notifyserver.user.service;
 
 import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
+import com.example.notifyserver.keyword.domain.Keyword;
+import com.example.notifyserver.keyword.repository.KeywordRepository;
+import com.example.notifyserver.scrap.domain.Scrap;
+import com.example.notifyserver.scrap.repository.ScrapRepository;
 import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
@@ -19,6 +23,8 @@ import static com.example.notifyserver.common.exception.enums.ErrorCode.USER_NOT
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ScrapRepository scrapRepository;
+    private final KeywordRepository keywordRepository;
 
     public void userLogin(final LoginRequest request){
         String googleId = request.googleId();
@@ -39,5 +45,14 @@ public class UserService {
     public void userRegister(final RegisterRequest request, final String googleId){
         User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
         user.update(request.nickname(), request.email(), request.userMajor());
+    }
+
+    @Transactional
+    public void userWithdraw(final String googleId){
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
+        Long userId = user.getUserId();
+        scrapRepository.deleteAllByUserId(userId);
+        keywordRepository.deleteAllByUserId(userId);
+        userRepository.deleteById(userId);
     }
 }

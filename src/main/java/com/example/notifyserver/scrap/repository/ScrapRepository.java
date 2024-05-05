@@ -12,8 +12,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
+
+    void deleteAllByUserId(Long userId);
 
     /**
      * 스크랩을 DB에 저장한다.
