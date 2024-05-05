@@ -4,6 +4,7 @@ spring:
     url: jdbc:mysql://notify.cjugwca6utbp.ap-northeast-2.rds.amazonaws.com:3306/notify
     username: ${{ secrets.DATABASE_USERNAME }}
     password: ${{ secrets.DATABASE_PASSWORD }}
+
   jpa:
     show-sql: true
     hibernate:
