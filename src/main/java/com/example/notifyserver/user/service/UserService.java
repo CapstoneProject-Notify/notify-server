@@ -51,8 +51,8 @@ public class UserService {
     public void userWithdraw(final String googleId){
         User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
         Long userId = user.getUserId();
-        scrapRepository.deleteAllByUserId(userId);
-        keywordRepository.deleteAllByUserId(userId);
-        userRepository.deleteById(userId);
+        scrapRepository.deleteAllByUser(user);
+        keywordRepository.deleteAllByUser(user);
+        userRepository.deleteByUserId(userId);
     }
 }

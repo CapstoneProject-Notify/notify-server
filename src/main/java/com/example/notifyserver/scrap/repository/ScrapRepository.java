@@ -2,6 +2,7 @@ package com.example.notifyserver.scrap.repository;
 
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.scrap.domain.Scrap;
+import com.example.notifyserver.user.domain.User;
 import feign.Param;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Repository
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
-    void deleteAllByUserId(Long userId);
+    void deleteAllByUser(User user);
 
     /**
      * 스크랩을 DB에 저장한다.

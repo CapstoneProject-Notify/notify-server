@@ -43,5 +43,17 @@ public class UserController {
         }
 
     }
+
+    @DeleteMapping("/delete")
+    public ApiResponse userWithDraw(@RequestHeader("googleId") String googleId){
+        try{
+            userService.userWithdraw(googleId);
+            return SuccessNonDataResponse.success(SuccessCode.DELETE_SUCCESS);
+        } catch (NotFoundUserException e) {
+            return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
+        } catch (Exception e) {
+            return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
+    }
 }
 
