@@ -1,6 +1,8 @@
-package com.example.notifyserver.crawler;
+package com.example.notifyserver.crawler.service;
 
+import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
+import com.example.notifyserver.crawler.repository.CrawlerRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,14 +10,20 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Map;
+import java.util.Date;
+import java.util.List;
+
 @Service
 public class CrawlerServiceImpl implements CrawlerService{
+
+    @Autowired
+    CrawlerRepository repository;
 
     @org.springframework.beans.factory.annotation.Value("${skku.username}")
     private String username;
@@ -61,9 +69,24 @@ public class CrawlerServiceImpl implements CrawlerService{
         driver.quit();
     }
 
+    /**
+     * DB에서 가장 최신의 글 2개의 제목과 날짜를 가져온다.
+     * @param noticeType 공지사항의 타입
+     * @return 제목과 날짜를 매핑한 객체
+     */
     @Override
-    public Map<String, String> getLastTwoNotices(NoticeType noticeType) {
-        return null;
+    public String [][] getLastTwoNotices(NoticeType noticeType) {
+
+        List<Notice> top2 = repository.findTop2ByOrderByCreatedAtDesc(noticeType);
+        String [][] result = new String[2][2]; // 각 행의 0번째 인덱스에는 제목이 1번쨰 인덱스에는 날짜가 들어있음. 0번쨰 행이 더 최신 글임
+
+        for (int i=0; i<2; i++) {
+            String noticeTitle = top2.get(i).getNoticeTitle();
+            Date noticeDate = top2.get(i).getNoticeDate();
+            result[i][0] = noticeTitle;
+            result[i][1] = noticeDate.toString();
+        }
+        return result;
     }
 
     @Override

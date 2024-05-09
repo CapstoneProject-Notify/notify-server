@@ -1,10 +1,7 @@
-package com.example.notifyserver.crawler;
+package com.example.notifyserver.crawler.service;
 
-import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 @Service
 public interface CrawlerService {
@@ -21,7 +18,7 @@ public interface CrawlerService {
      * @param noticeType 공지사항의 타입
      * @return 제목과 날짜를 매핑한 객체
      */
-    public Map<String, String> getLastTwoNotices(NoticeType noticeType);
+    public String [][] getLastTwoNotices(NoticeType noticeType);
     
     /**
      * 새 글이 있는지 확인 후 새 글의 개수를 반환한다.
