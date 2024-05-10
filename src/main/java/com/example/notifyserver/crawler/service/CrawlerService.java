@@ -15,8 +15,11 @@ public interface CrawlerService {
     /**
      * 공통 공지사항에 접근하는 경우 학교 사이트에 로그인 후 게시판 버튼을 클릭하여 게시판 페이지에 진입한다.
      * @param driver 크롬 드라이버
+     * @param username 로그인 ID
+     * @param password 로그인 PW
      */
-    public void loginAndGoToComNoticePage(WebDriver driver);
+
+    public void loginAndGoToComNoticePage(WebDriver driver, String username, String password);
 
     /**
      * DB에서 가장 최신의 글 2개의 제목과 날짜를 가져온다.

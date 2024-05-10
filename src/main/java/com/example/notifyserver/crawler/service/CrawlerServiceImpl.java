@@ -28,27 +28,22 @@ public class CrawlerServiceImpl implements CrawlerService{
     @Autowired
     CrawlerRepository repository;
 
-    @org.springframework.beans.factory.annotation.Value("${skku.username}")
-    private String username;
-
-    @Value("${skku.password}")
-    private String password;
-
     /**
      * 공통 공지사항에 접근하는 경우 학교 사이트에 로그인 후 게시판 버튼을 클릭하여 게시판 페이지에 진입한다.
-      * @param driver 크롬 드라이버
+     * @param driver 크롬 드라이버
+     * @param username 로그인 ID
+     * @param password 로그인 PW
      */
     @Override
-    public void loginAndGoToComNoticePage(WebDriver driver) {
-        username = new String(Base64.getDecoder().decode(username));
-        password = new String(Base64.getDecoder().decode(password));
+    public void loginAndGoToComNoticePage(WebDriver driver, String username, String password) {
 
         // 웹 페이지 열기
         driver.get(NoticeConstants.LOGIN_PAGE);
 
         // 아이디와 비밀번호 입력
-        WebElement usernameInput = driver.findElement(By.id("userid"));
-        WebElement passwordInput = driver.findElement(By.id("userpwd"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5)); // 최대 5초간 대기
+        WebElement usernameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userid")));
+        WebElement passwordInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userpwd")));
         usernameInput.sendKeys(username);
         passwordInput.sendKeys(password);
 
@@ -57,7 +52,6 @@ public class CrawlerServiceImpl implements CrawlerService{
         loginButton.click();
 
         // 게시판 버튼 클릭
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         WebElement boardButton = wait.until(ExpectedConditions.presenceOfElementLocated
                 (By.cssSelector("#mypage > form:nth-child(16) > div > div.pageHeader > div.mainMenu > div > ul > li.board > a > span.ico > img")));
         boardButton.click();
