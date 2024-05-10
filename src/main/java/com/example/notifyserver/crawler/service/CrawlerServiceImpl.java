@@ -63,9 +63,23 @@ public class CrawlerServiceImpl implements CrawlerService{
         boardButton.click();
     }
 
+    /**
+     * DB에서 가장 최신의 글 2개의 제목과 날짜를 가져온다.
+     * @param noticeType 공지사항의 타입
+     * @return 제목과 날짜를 매핑한 객체
+     */
     @Override
-    public String[][] getLastTwoNotices(NoticeType noticeType) {
-        return new String[0][];
+    public String [][] getLastTwoNotices(NoticeType noticeType) {
+        List<Notice> top2 = repository.findTop2ByOrderByCreatedAtDesc(noticeType);
+        String [][] result = new String[2][2]; // 각 행의 0번째 인덱스에는 제목이 1번쨰 인덱스에는 날짜가 들어있음. 0번쨰 행이 더 최신 글임
+
+        for (int i=0; i<2; i++) {
+            String noticeTitle = top2.get(i).getNoticeTitle();
+            Date noticeDate = top2.get(i).getNoticeDate();
+            result[i][0] = noticeTitle;
+            result[i][1] = noticeDate.toString();
+        }
+        return result;
     }
 
     @Override
