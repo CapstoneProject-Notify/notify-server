@@ -5,6 +5,8 @@ import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface CrawlerService {
 
@@ -36,6 +38,23 @@ public interface CrawlerService {
      * @return 공지사항 제목과 날짜 리스트
      */
     public TitlesAndDates getTitlesAndDates(WebDriver driver);
+
+    /**
+     * 새 글의 개수를 찾는다.
+     * @param top2 DB에 저장된 가장 최근 게시물 2개
+     * @param driver 크롬 드라이버
+     * @return 새 글의 개수
+     */
+    public int findNewNoticeOrder(String[][] top2, WebDriver driver);
+
+    /**
+     * 새 글의 유무를 체크한다.
+     * @param top2 DB에 저장된 가장 최근 게시물 2개
+     * @param titles 페이지에서 가져온 제목들
+     * @param dates 페이지에서 가져온 날짜들
+     * @return 새 글의 유무
+     */
+    public boolean newNoticeCheck(String[][] top2, List<String> titles, List<String> dates);
 
     /**
      * 날짜 형식을 바꾸는 메서드
