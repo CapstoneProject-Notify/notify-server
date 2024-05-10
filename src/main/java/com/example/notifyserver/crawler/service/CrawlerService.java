@@ -1,6 +1,7 @@
 package com.example.notifyserver.crawler.service;
 
 import com.example.notifyserver.common.domain.NoticeType;
+import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -9,9 +10,10 @@ public interface CrawlerService {
     // 1. 새 글 확인 필요 메서드
 
     /**
-     * 학교 사이트에 로그인 후 게시판 버튼을 클릭하여 게시판 페이지에 진입한다.
+     * 공통 공지사항에 접근하는 경우 학교 사이트에 로그인 후 게시판 버튼을 클릭하여 게시판 페이지에 진입한다.
+     * @param driver 크롬 드라이버
      */
-    public void loginAndGoToComNoticePage();
+    public void loginAndGoToComNoticePage(WebDriver driver);
 
     /**
      * DB에서 가장 최신의 글 2개의 제목과 날짜를 가져온다.
@@ -25,5 +27,5 @@ public interface CrawlerService {
      * @param noticeType 공지사항의 타입
      * @return 새 글의 개수
      */
-    public int getNewNoticeCount(NoticeType noticeType);
+    public int getNewNoticeCount(NoticeType noticeType, WebDriver driver, String [][] top2);
 }
