@@ -88,4 +88,37 @@ class CrawlerServiceImplTest {
         assertEquals(notice2.getNoticeDate().toString(), lastTwoNotices[0][1]);
     }
 
+    @Test
+    public void getNewNoticeCount() throws Exception{
+        //given
+        service.loginAndGoToComNoticePage(webDriver);
+        TitlesAndDates titlesAndDates = service.getTitlesAndDates(webDriver);
+        List<String> titles = titlesAndDates.titles();
+        List<String> dates = titlesAndDates.dates();
+
+        //when
+        int randNum = new Random().nextInt(1, 14);
+        Notice notice1 = Notice.builder().
+                noticeTitle(titles.get(randNum)).
+                noticeDate(new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH).parse(dates.get(randNum))).
+                noticeType(NoticeType.COM).
+                noticeUrl("url1").
+                build();
+        Notice notice2 = Notice.builder().
+                noticeTitle(titles.get(randNum+1)).
+                noticeDate(new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH).parse(dates.get(randNum+1))).
+                noticeType(NoticeType.COM).
+                noticeUrl("url2").
+                build();
+
+        em.persist(notice2);
+        em.persist(notice1);
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(3));
+        int newNoticeCount = service.getNewNoticeCount(NoticeType.COM, webDriver, service.getLastTwoNotices(NoticeType.COM));
+
+        webDriver.close();
+        //then
+        assertEquals(randNum, newNoticeCount);
+    }
+
 }
