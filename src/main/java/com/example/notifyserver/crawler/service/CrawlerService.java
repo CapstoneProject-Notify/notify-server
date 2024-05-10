@@ -1,6 +1,7 @@
 package com.example.notifyserver.crawler.service;
 
 import com.example.notifyserver.common.domain.NoticeType;
+import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +29,19 @@ public interface CrawlerService {
      * @return 새 글의 개수
      */
     public int getNewNoticeCount(NoticeType noticeType, WebDriver driver, String [][] top2);
+
+    /**
+     * 공지사항 페이지에서 공지사항의 제목과 날짜를 가져온다.
+     * @param driver 크롬 드라이버
+     * @return 공지사항 제목과 날짜 리스트
+     */
+    public TitlesAndDates getTitlesAndDates(WebDriver driver);
+
+    /**
+     * 날짜 형식을 바꾸는 메서드
+     * @param dateString 페이지에서 가져온 날짜 텍스트
+     * @return DB에 저장할 날짜 형식을 문자열로 바꾼 값
+     */
+    public String dateFormating(String dateString);
+
 }

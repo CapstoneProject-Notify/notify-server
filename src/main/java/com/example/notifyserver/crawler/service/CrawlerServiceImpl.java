@@ -86,4 +86,65 @@ public class CrawlerServiceImpl implements CrawlerService{
     public int getNewNoticeCount(NoticeType noticeType, WebDriver driver, String[][] top2) {
         return 0;
     }
+
+    /**
+     * 공지사항 페이지에서 공지사항의 제목과 날짜를 가져온다.
+     * @param driver 크롬 드라이버
+     * @return 공지사항 제목과 날짜 리스트
+     */
+    @NotNull
+    @Override
+    public TitlesAndDates getTitlesAndDates(WebDriver driver) {
+
+        driver.get(NoticeConstants.BOARD_PAGE);
+
+        // 모든 iframe 요소 가져오기
+        WebElement secondIframe = driver.findElement(By.xpath("(//iframe)[2]"));
+        // 두 번째 iframe으로 전환
+        driver.switchTo().frame(secondIframe);
+
+        // 클래스 이름이 .ev_dhx_terrace 인 모든 요소 가져오기
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        List<WebElement> dynamicElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".ev_dhx_terrace")));
+
+        // 타이틀과 날짜를 저장할 리스트 생성
+        List<String> titles = new ArrayList<>();
+        List<String> dates = new ArrayList<>();
+
+        // 가져온 요소들에서 타이틀과 날짜 추출하여 리스트에 저장
+        for (WebElement element : dynamicElements) {
+            // 타이틀 추출
+            WebElement titleElement = element.findElement(By.cssSelector("span"));
+            titles.add(titleElement.getText());
+
+            // 날짜 추출
+            WebElement dateElement = element.findElement(By.cssSelector("td:nth-child(6)"));
+            dates.add(dateFormating(dateElement.getText()));
+        }
+
+        // TitlesAndDates 객체에 저장해 반환
+        return new TitlesAndDates(titles, dates);
+    }
+
+    /**
+     * 날짜 형식을 바꾸는 메서드
+     * @param dateString 페이지에서 가져온 날짜 텍스트
+     * @return DB에 저장할 날짜 형식을 문자열로 바꾼 값
+     */
+    @Override
+    public String dateFormating(String dateString) {
+        // SimpleDateFormat을 사용하여 기존 형식의 문자열을 Date 객체로 파싱
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd (E) HH:mm");
+        Date date;
+        try {
+            date = inputFormat.parse(dateString);
+            // 원하는 형식의 문자열로 변환
+            SimpleDateFormat outputFormat = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+            // 결과 반환
+            return outputFormat.format(date);
+
+        } catch (ParseException e) {
+            throw new IllegalArgumentException();
+        }
+    }
 }
