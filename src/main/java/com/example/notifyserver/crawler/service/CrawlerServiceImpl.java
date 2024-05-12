@@ -1,11 +1,14 @@
 package com.example.notifyserver.crawler.service;
 
+import com.example.notifyserver.com_notice.domain.ComNotice;
+import com.example.notifyserver.com_notice.repository.ComNoticeRepository;
 import com.example.notifyserver.common.constants.CrawlerConstants;
 import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.model.NotFoundException;
+import com.example.notifyserver.common.repository.NoticeRepository;
 import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import com.example.notifyserver.crawler.repository.CrawlerRepository;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +32,12 @@ import java.util.*;
 public class CrawlerServiceImpl implements CrawlerService{
 
     @Autowired
-    CrawlerRepository repository;
+    CrawlerRepository crawlerRepository;
+    @Autowired
+    ComNoticeRepository comNoticeRepository;
+    @Autowired
+    NoticeRepository noticeRepository;
+
 
     /**
      * 공통 공지사항에 접근하는 경우 학교 사이트에 로그인 후 게시판 버튼을 클릭하여 게시판 페이지에 진입한다.
@@ -47,7 +55,12 @@ public class CrawlerServiceImpl implements CrawlerService{
         } catch (org.openqa.selenium.NoSuchSessionException e) {
             // 세션 다시 시작
             driver.quit();
-            driver = new ChromeDriver(); // 새로운 WebDriver 인스턴스 생성
+            // Headless 모드로 Chrome 실행
+            ChromeOptions options = new ChromeOptions();
+            // Headless 모드 활성화
+            options.addArguments("--headless");
+            // WebDriver 인스턴스 생성
+            driver = new ChromeDriver(options); // 새로운 WebDriver 인스턴스 생성
             // 다시 시도
             driver.get(NoticeConstants.LOGIN_PAGE);
         }
@@ -72,19 +85,20 @@ public class CrawlerServiceImpl implements CrawlerService{
 
     /**
      * DB에서 가장 최신의 글 2개의 제목과 날짜를 가져온다.
+     *
      * @param noticeType 공지사항의 타입
      * @return 제목과 날짜를 매핑한 객체
      */
     @Override
-    public String [][] getLastTwoNotices(NoticeType noticeType) {
-        List<Notice> top2 = repository.findTop2ByOrderByCreatedAtDesc(noticeType);
+    public String[][] getLastTwoNotices(NoticeType noticeType) {
+        List<Notice> top2 = crawlerRepository.findTop2ByOrderByCreatedAtDesc(noticeType);
         String [][] result = new String[2][2]; // 각 행의 0번째 인덱스에는 제목이 1번쨰 인덱스에는 날짜가 들어있음. 0번쨰 행이 더 최신 글임
 
         for (int i=0; i<2; i++) {
             String noticeTitle = top2.get(i).getNoticeTitle();
             Date noticeDate = top2.get(i).getNoticeDate();
             result[i][0] = noticeTitle;
-            result[i][1] = noticeDate.toString();
+            result[i][1] = new Date(noticeDate.getTime()).toString();
         }
         return result;
     }
@@ -209,10 +223,12 @@ public class CrawlerServiceImpl implements CrawlerService{
         boolean hasFirst = false; // 페이지에 가장 최신글의 존재 유무
         boolean hasSecond = false; // 페이지에 두번째 최신글의 존재 유무
 
+        System.out.println("fi = " + firstTitle);
+
         // 가장 최신의 글 2개가 DB의 가장 최신의 글 두개와 일치하는지 확인
         for(int i=0; i<2; i++){
-            if(titles.get(i).equals(firstTitle) && dates.get(i).equals(firstDate)) hasFirst = true;
-            else if(titles.get(i).equals(secondTitle) && dates.get(i).equals(secondDate)) hasSecond = true;
+            if(titles.get(i).equals(firstTitle) && dates.get(i).toString().equals(firstDate)) hasFirst = true;
+            else if(titles.get(i).equals(secondTitle) && dates.get(i).toString().equals(secondDate)) hasSecond = true;
         }
         return !(hasFirst && hasSecond);
     }
@@ -375,6 +391,31 @@ public class CrawlerServiceImpl implements CrawlerService{
             driver.close();
             // 아이디 입력 요소가 없으면 로그인된 상태로 간주하여 true 반환
             return true;
+        }
+    }
+
+    /**
+     * 새 공통 공지사항들을 DB에 저장한다.
+     * @param newNotices 새 공통 공지사항들 리스트
+     */
+    public void saveNewComNotices(List<Notice> newNotices) {
+        for (Notice notice : newNotices) {
+            // 공지사항 객체화
+            Notice build = Notice.builder()
+                    .noticeTitle(notice.getNoticeTitle())
+                    .noticeDate(notice.getNoticeDate())
+                    .noticeUrl(notice.getNoticeUrl())
+                    .noticeType(notice.getNoticeType())
+                    .build();
+            // 공지사항 테이블에 저장
+            noticeRepository.save(build);
+
+            //공통 공지사항 객체화
+            ComNotice comNotice = new ComNotice();
+            // 공지사항 테이블의 아이디를 가져오기
+            comNotice.setNoticeId(build.getNoticeId());
+            //공통 공지사항 테이블에 저장
+            comNoticeRepository.save(comNotice);
         }
     }
 }

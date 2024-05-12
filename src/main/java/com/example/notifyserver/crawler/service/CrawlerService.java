@@ -26,10 +26,11 @@ public interface CrawlerService {
 
     /**
      * DB에서 가장 최신의 글 2개의 제목과 날짜를 가져온다.
+     *
      * @param noticeType 공지사항의 타입
      * @return 제목과 날짜를 매핑한 객체
      */
-    String [][] getLastTwoNotices(NoticeType noticeType);
+    String[][] getLastTwoNotices(NoticeType noticeType);
     
     /**
      * 새 글이 있는지 확인 후 새 글의 개수를 반환한다.
@@ -88,4 +89,10 @@ public interface CrawlerService {
      * @return 로그인 유무
      */
     boolean isLoggedIn(WebDriver driver);
+
+    /**
+     * 새 공통 공지사항들을 DB에 저장한다.
+     * @param newNotices 새 공통 공지사항들 리스트
+     */
+    void saveNewComNotices(List<Notice> newNotices);
 }
