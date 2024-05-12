@@ -97,12 +97,12 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @return
      */
     @Override
-    public int getNewNoticeCount(NoticeType noticeType, WebDriver driver, String [][] top2) {
+    public int getNewNoticeCount(NoticeType noticeType, WebDriver driver, String [][] top2) throws InterruptedException, ParseException {
         // 페이지에서 제목 목록과 날짜 목록을 가져오기
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        TitlesAndDates titlesAndDates = getTitlesAndDates(driver);
+        TitlesAndDates titlesAndDates = getTitlesAndDatesOfComNoticeFromPageNum(driver, 1);
 
-        boolean hasNewNotice = newNoticeCheck(top2, titlesAndDates.titles(), titlesAndDates.dates());
+        boolean hasNewNotice = newComNoticeCheck(top2, titlesAndDates.titles(), titlesAndDates.dates());
         // 새 글이 없는 경우 0을 반환
         if(!hasNewNotice) {return 0;}
         // 새 글이 있는 경우 새 글이 몇개 있는지 반환
