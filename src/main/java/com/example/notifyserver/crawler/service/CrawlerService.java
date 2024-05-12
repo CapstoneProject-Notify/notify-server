@@ -74,4 +74,12 @@ public interface CrawlerService {
      */
     List<Notice> getNewNoticesByPageNum(String username, String password, int pageNum, WebDriver driver) throws InterruptedException, ParseException;
 
+    /**
+     * 페이지에서 가져온 공통 공지사항들의 날짜 텍스트를 Date 객체로 변환한다.
+     * @param input 페이지에서 가져온 공통 공지사항의 날짜 텍스트
+     * @return Date 객체로 변환한 공통 공지사항의 날짜
+     * @throws ParseException
+     */
+    Date parseComNoticeDateAndFormatting(String input) throws ParseException;
+
 }
