@@ -110,28 +110,32 @@ public class CrawlerServiceImpl implements CrawlerService{
     }
 
     /**
-     * 공지사항 페이지에서 공지사항의 제목과 날짜를 가져온다.
+     * 공지사항 페이지에서 공통 공지사항의 제목과 날짜를 가져온다.
      * @param driver 크롬 드라이버
      * @return 공지사항 제목과 날짜 리스트
      */
     @NotNull
     @Override
-    public TitlesAndDates getTitlesAndDates(WebDriver driver) {
+    public TitlesAndDates getTitlesAndDatesOfComNoticeFromPageNum(WebDriver driver, int pageNum) throws ParseException {
 
         driver.get(NoticeConstants.BOARD_PAGE);
 
-        // 모든 iframe 요소 가져오기
+        // 두번째 iframe 요소 가져오기
         WebElement secondIframe = driver.findElement(By.xpath("(//iframe)[2]"));
         // 두 번째 iframe으로 전환
         driver.switchTo().frame(secondIframe);
 
-        // 클래스 이름이 .ev_dhx_terrace 인 모든 요소 가져오기
+        // 해당 페이지로 이동
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement pageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.dhx_page:nth-of-type(" + pageNum + ")")));
+        pageButton.click();
+
+        // 클래스 이름이 .ev_dhx_terrace 인 모든 요소 가져오기
         List<WebElement> dynamicElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".ev_dhx_terrace")));
 
         // 타이틀과 날짜를 저장할 리스트 생성
         List<String> titles = new ArrayList<>();
-        List<String> dates = new ArrayList<>();
+        List<Date> dates = new ArrayList<>();
 
         // 가져온 요소들에서 타이틀과 날짜 추출하여 리스트에 저장
         for (WebElement element : dynamicElements) {
@@ -141,7 +145,8 @@ public class CrawlerServiceImpl implements CrawlerService{
 
             // 날짜 추출
             WebElement dateElement = element.findElement(By.cssSelector("td:nth-child(6)"));
-            dates.add(dateFormating(dateElement.getText()));
+            Date date = parseComNoticeDateAndFormatting(dateElement.getText());
+            dates.add(date);
         }
 
         // TitlesAndDates 객체에 저장해 반환
