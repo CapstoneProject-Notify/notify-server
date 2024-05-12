@@ -202,7 +202,7 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @return 새 글의 유무
      */
     @Override
-    public boolean newNoticeCheck(String[][] top2, List<String> titles, List<String> dates) {
+    public boolean newComNoticeCheck(String[][] top2, List<String> titles, List<Date> dates) {
         String firstTitle = top2[0][0]; // 가장 최신 글의 제목
         String firstDate = top2[0][1]; // 가장 최신 글의 날짜
         String secondTitle = top2[1][0]; // 두번째 최신 글의 제목
@@ -210,6 +210,7 @@ public class CrawlerServiceImpl implements CrawlerService{
         boolean hasFirst = false; // 페이지에 가장 최신글의 존재 유무
         boolean hasSecond = false; // 페이지에 두번째 최신글의 존재 유무
 
+        // 가장 최신의 글 2개가 DB의 가장 최신의 글 두개와 일치하는지 확인
         for(int i=0; i<2; i++){
             if(titles.get(i).equals(firstTitle) && dates.get(i).equals(firstDate)) hasFirst = true;
             else if(titles.get(i).equals(secondTitle) && dates.get(i).equals(secondDate)) hasSecond = true;
@@ -236,6 +237,30 @@ public class CrawlerServiceImpl implements CrawlerService{
 
         } catch (ParseException e) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * 로그인 메서드를 통해 이미 로그인 되었는지 확인한다.
+     * @param driver 크롬 드라이버
+     * @return 로그인 유무
+     */
+    @Override
+    public boolean isLoggedIn(WebDriver driver){
+        // 웹 페이지 열기
+        driver.get(NoticeConstants.LOGIN_PAGE);
+
+        // 아이디 입력 요소 존재 확인
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3)); // 최대 3초간 대기
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userid")));
+            driver.close();
+            // 아이디 입력 요소가 존재하면 로그인되지 않은 상태로 간주하여 false 반환
+            return false;
+        } catch (org.openqa.selenium.NoSuchElementException e) {
+            driver.close();
+            // 아이디 입력 요소가 없으면 로그인된 상태로 간주하여 true 반환
+            return true;
         }
     }
 }
