@@ -11,16 +11,19 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 public class CrawlerServiceImpl implements CrawlerService{
@@ -35,13 +38,21 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @param password 로그인 PW
      */
     @Override
-    public void loginAndGoToComNoticePage(WebDriver driver, String username, String password) {
+    public WebDriver loginAndGoToComNoticePage(WebDriver driver, String username, String password) {
 
         // 웹 페이지 열기
-        driver.get(NoticeConstants.LOGIN_PAGE);
-
+        try {
+            // 웹 페이지 열기
+            driver.get(NoticeConstants.LOGIN_PAGE);
+        } catch (org.openqa.selenium.NoSuchSessionException e) {
+            // 세션 다시 시작
+            driver.quit();
+            driver = new ChromeDriver(); // 새로운 WebDriver 인스턴스 생성
+            // 다시 시도
+            driver.get(NoticeConstants.LOGIN_PAGE);
+        }
         // 아이디와 비밀번호 입력
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5)); // 최대 5초간 대기
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // 최대 10초간 대기
         WebElement usernameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userid")));
         WebElement passwordInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("userpwd")));
         usernameInput.sendKeys(username);
@@ -55,6 +66,8 @@ public class CrawlerServiceImpl implements CrawlerService{
         WebElement boardButton = wait.until(ExpectedConditions.presenceOfElementLocated
                 (By.cssSelector("#mypage > form:nth-child(16) > div > div.pageHeader > div.mainMenu > div > ul > li.board > a > span.ico > img")));
         boardButton.click();
+
+        return driver;
     }
 
     /**
