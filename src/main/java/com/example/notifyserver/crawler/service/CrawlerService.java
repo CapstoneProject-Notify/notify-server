@@ -82,4 +82,10 @@ public interface CrawlerService {
      */
     Date parseComNoticeDateAndFormatting(String input) throws ParseException;
 
+    /**
+     * 로그인 메서드를 통해 이미 로그인 되었는지 확인한다.
+     * @param driver 크롬 드라이버
+     * @return 로그인 유무
+     */
+    boolean isLoggedIn(WebDriver driver);
 }
