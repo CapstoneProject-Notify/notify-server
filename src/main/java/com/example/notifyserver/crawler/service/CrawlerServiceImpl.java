@@ -1,5 +1,6 @@
 package com.example.notifyserver.crawler.service;
 
+import com.example.notifyserver.common.constants.CrawlerConstants;
 import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
@@ -154,35 +155,42 @@ public class CrawlerServiceImpl implements CrawlerService{
     }
 
     /**
-     * 새 글의 개수를 찾는다.
+     * 공통 공지사항의 새 글의 개수를 찾는다.
      * @param top2 DB에 저장된 가장 최근 게시물 2개
      * @param driver 크롬 드라이버
      * @return 새 글의 개수
      */
     @Override
-    public int findNewNoticeOrder(String[][] top2, WebDriver driver) {
-        String firstTitle = top2[0][0];
-        String firstDate = top2[0][1];
-        String secondTitle = top2[1][0];
-        String secondDate = top2[1][1];
+    public int findNewNoticeOrder(String[][] top2, WebDriver driver) throws InterruptedException, ParseException {
+        String firstTitle = top2[0][0]; // DB의 첫번째(제일 최근) 게시물의 제목
+        String firstDate = top2[0][1]; // DB의 첫번째(제일 최근) 게시물의 날짜
+        String secondTitle = top2[1][0]; // DB의 두번째 게시물의 제목
+        String secondDate = top2[1][1]; // DB의 두번째 게시물의 날짜
+
         // 1페이지부터 10페이지까지 반복하면서
         for(int i=1; i<=10; i++){
+            // 해당 페이지로 이동
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            WebElement nextButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.dhx_page:nth-of-type(" + i + ")")));
-            nextButton.click();
+            WebElement pageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.dhx_page:nth-of-type(" + i + ")")));
+            pageButton.click();
 
-            TitlesAndDates titlesAndDates = getTitlesAndDates(driver);
+            // 클릭이 정상적으로 적용되도록 0.5초 대기
+            Thread.sleep(500);
+
+            // 페이지에 있는 공통 공지사항들의 제목과 날짜 가져오기
+            TitlesAndDates titlesAndDates = getTitlesAndDatesOfComNoticeFromPageNum(driver, i);
+
+            // DB의 첫번째 게시물의 인덱스를 찾으면 새글의 개수를 반환
             if(titlesAndDates.titles().contains(firstTitle)
-                    && titlesAndDates.titles().indexOf(firstTitle) == titlesAndDates.dates().indexOf(firstDate)){
-                // DB의 첫번째 게시물의 인덱스를 찾으면 새글의 개수를 반환
-                return (i-1) * 15 + titlesAndDates.titles().indexOf(firstTitle);
-            }else if(titlesAndDates.titles().contains(secondTitle)
-                    && titlesAndDates.titles().indexOf(secondTitle) == titlesAndDates.dates().indexOf(secondDate)){
+                    && titlesAndDates.titles().indexOf(firstTitle) == titlesAndDates.dates().indexOf(firstDate))
+                return (i-1) * CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE + titlesAndDates.titles().indexOf(firstTitle);
+
                 // DB의 두번째 게시물의 인덱스를 찾으면 첫번째 게시물이 수정이나 삭제되었다고 여기고 두번째 게시글 이후를 새글로 간주 후 개수를 반환
-                return (i-1) * 15 + titlesAndDates.titles().indexOf(secondTitle);
-            }
+            else if(titlesAndDates.titles().contains(secondTitle)
+                    && titlesAndDates.titles().indexOf(secondTitle) == titlesAndDates.dates().indexOf(secondDate))
+                return (i-1) * CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE + titlesAndDates.titles().indexOf(secondTitle);
         }
-        // 10페이지까지 반복해도 새 게시물이 없는 경우
+        // 10페이지까지 반복해도 새 게시물이 없는 경우 예외 발생
         throw new NotFoundException(ErrorCode.NOT_FOUND_RESOURCE_EXCEPTION);
     }
 
