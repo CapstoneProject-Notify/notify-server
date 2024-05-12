@@ -219,24 +219,41 @@ public class CrawlerServiceImpl implements CrawlerService{
     }
 
     /**
-     * 날짜 형식을 바꾸는 메서드
-     * @param dateString 페이지에서 가져온 날짜 텍스트
-     * @return DB에 저장할 날짜 형식을 문자열로 바꾼 값
+     * 페이지에서 가져온 공통 공지사항들의 날짜 텍스트를 Date 객체로 변환한다.
+     * @param input 페이지에서 가져온 공통 공지사항의 날짜 텍스트
+     * @return Date 객체로 변환한 공통 공지사항의 날짜
+     * @throws ParseException
      */
     @Override
-    public String dateFormating(String dateString) {
-        // SimpleDateFormat을 사용하여 기존 형식의 문자열을 Date 객체로 파싱
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy/MM/dd (E) HH:mm");
-        Date date;
-        try {
-            date = inputFormat.parse(dateString);
-            // 원하는 형식의 문자열로 변환
-            SimpleDateFormat outputFormat = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-            // 결과 반환
-            return outputFormat.format(date);
+    public Date parseComNoticeDateAndFormatting(String input) throws ParseException {
 
+        // 공백으로 나누기
+        String[] parts = input.split(" ");
+        int length = parts.length;
+
+        // 문자열에서 각 요소 파싱하기
+        String dateString = parts[length-3].trim().replace("(",""); // 년/월/일 추출
+        String dayString = parts[length-2].replace("(","").replace(")",""); // 요일 추출
+        String timeString = parts[length-1].replace(")",""); // 시간 추출
+        String totalString = dateString+" "+dayString+" "+timeString;
+
+        // 한국어로 되어있는 날짜를 변환하는 포맷
+        SimpleDateFormat koreanInputFormat = new SimpleDateFormat("yyyy/MM/dd E HH:mm", Locale.KOREAN);
+        // 영어로 되어있는 날짜를 변환하는 포맷
+        SimpleDateFormat englishInputFormat = new SimpleDateFormat("yyyy/MM/dd E HH:mm", Locale.ENGLISH);
+
+        // 날짜와 요일, 시간 정보를 Date 객체로 변환
+        try {
+            // 한국어로 파싱 시도
+            return koreanInputFormat.parse(totalString);
         } catch (ParseException e) {
-            throw new IllegalArgumentException();
+            try {
+                // 한국어로 파싱이 실패하면 영어로 파싱 시도
+                return englishInputFormat.parse(totalString);
+            } catch (ParseException ex) {
+                // 둘 다 파싱이 실패하면 예외 처리
+                throw new ParseException(ex.getMessage(), ex.getErrorOffset());
+            }
         }
     }
 
