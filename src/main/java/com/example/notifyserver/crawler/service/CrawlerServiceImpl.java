@@ -10,9 +10,11 @@ import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import com.example.notifyserver.crawler.repository.CrawlerRepository;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 public class CrawlerServiceImpl implements CrawlerService{
@@ -216,6 +215,104 @@ public class CrawlerServiceImpl implements CrawlerService{
             else if(titles.get(i).equals(secondTitle) && dates.get(i).equals(secondDate)) hasSecond = true;
         }
         return !(hasFirst && hasSecond);
+    }
+
+    /**
+     * 해당 페이지 번호에서 공지사항들을 가져옵니다.
+     * @param username 로그인 ID
+     * @param password 로그인 PW
+     * @param pageNum 가져올 페이지 번호
+     * @param oldDriver 크롬 드라이버
+     * @return 해당 페이지 번호의 공지사항들 리스트
+     * @throws InterruptedException
+     * @throws ParseException
+     */
+    @Override
+    public List<Notice> getNewNoticesByPageNum(String username, String password, int pageNum, WebDriver oldDriver) throws InterruptedException, ParseException {
+        oldDriver.quit();
+        ChromeOptions options = new ChromeOptions().addArguments("--disable-popup-blocking");
+        WebDriver driver = new ChromeDriver(options);
+        // 공지사항들을 저장할 리스트
+        List<Notice> notices = new ArrayList<>();
+        //로그인 하기
+        if(!isLoggedIn(driver)) {
+            driver = loginAndGoToComNoticePage(driver, username, password);
+        }
+
+        // 공지 페이지로 이동
+        driver.get(NoticeConstants.BOARD_PAGE);
+
+        // 두번째 iframe 요소 가져오기
+        WebElement secondIframe = driver.findElement(By.xpath("(//iframe)[2]"));
+        // 두 번째 iframe으로 전환
+        driver.switchTo().frame(secondIframe);
+
+        // 해당 페이지로 이동
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // 최대 10초간 대기
+        WebElement nextButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.dhx_page:nth-of-type(" + pageNum + ")")));
+        nextButton.click();
+
+        //페이지의 이동을 위해 0.5초 대기
+        Thread.sleep(500);
+
+        // 클래스 이름이 .ev_dhx_terrace 인 모든 요소 가져오기
+        List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".ev_dhx_terrace")));
+        String currentHandle = driver.getWindowHandle();
+        // 각 공지사항을 클릭
+        for (WebElement element : elements) {
+            element.click();
+        }
+
+        // 클릭이 제대로 진행될 때까지 1초 대기
+        Thread.sleep(1000);
+        // 새로 열린 창의 핸들을 가져오기
+        Set<String> windowHandles = driver.getWindowHandles();
+        // 모든 창에서 공지사항 정보 가져오기
+        for (String windowHandle : windowHandles) {
+            if(!windowHandle.equals(currentHandle)) {
+                String newHandle = windowHandle;
+                driver.switchTo().window(newHandle);
+
+                // 새로 열린 창이 완전히 로드될 때까지 대기
+                wait.until(webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
+
+                // 페이지에서 URL을 찾아 문자열로 저장
+                String noticeUrl = driver.getCurrentUrl();
+
+                // 페이지에서 공지 제목을 찾아 문자열로 변환
+                WebElement title = driver.findElement(By.cssSelector(".searom_tit"));
+                String noticeTitle = title.getText();
+
+                // 페이지에서 공지 날짜를 찾아 날짜 객체로 변환
+                WebElement date = driver.findElement(By.id("reg_info"));
+                String dateText = date.getText();
+                Date noticeDate = parseComNoticeDateAndFormatting(dateText);
+
+                // noticeDate를 가져올 때까지 기다리기
+                Thread.sleep(100);
+
+                // 공지 객체로 만들기
+                Notice notice = Notice.builder()
+                        .noticeTitle(noticeTitle)
+                        .noticeDate(noticeDate)
+                        .noticeUrl(noticeUrl)
+                        .noticeType(NoticeType.COM)
+                        .build();
+                notices.add(notice);
+
+                // 창 닫기
+                driver.close();
+            }
+        }
+        // 현재 창으로 전환
+        driver.switchTo().window(currentHandle);
+        // 창 닫기
+        driver.close();
+
+        // noticeDate 오래된 순으로 정렬(나중에 DB에 넣을 때 오래된 것을 먼저 삽입해야하므로)
+        Comparator<Notice> byNoticeDate = Comparator.comparing(Notice::getNoticeDate);
+        Collections.sort(notices, byNoticeDate);
+        return notices;
     }
 
     /**
