@@ -1,5 +1,6 @@
 package com.example.notifyserver.crawler.service;
 
+import com.example.notifyserver.common.constants.CrawlerConstants;
 import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
@@ -15,17 +16,18 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(properties = "spring.config.location=classpath:application.yml")
+@SpringBootTest
 @Transactional
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CrawlerServiceImplTest {
@@ -35,9 +37,6 @@ class CrawlerServiceImplTest {
     NoticeRepository noticeRepository;
     @Autowired
     EntityManager em;
-
-    @Value("${skku.username}") String encodedUsername;
-    @Value("${skku.password}") String encodedPassword;
 
     ChromeOptions options = new ChromeOptions().addArguments("--headless");
 
@@ -49,8 +48,8 @@ class CrawlerServiceImplTest {
         WebDriver webDriver = new ChromeDriver(options);
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
         crawlerService.loginAndGoToComNoticePage(webDriver,
-                new String(Base64.getDecoder().decode(encodedUsername)),
-                new String(Base64.getDecoder().decode(encodedPassword)));
+                new String(Base64.getDecoder().decode("YWxlbmpi")),
+                new String(Base64.getDecoder().decode("ZGx3amRxbHMxMiE=")));
         //when
         // 로그인을 해야지만 들어갈 수 있는 링크
         webDriver.get(NoticeConstants.BOARD_PAGE);
@@ -97,11 +96,11 @@ class CrawlerServiceImplTest {
         WebDriver webDriver = new ChromeDriver(options);
         //given
         crawlerService.loginAndGoToComNoticePage(webDriver,
-                new String(Base64.getDecoder().decode(encodedUsername)),
-                new String(Base64.getDecoder().decode(encodedPassword)));
-        TitlesAndDates titlesAndDates = crawlerService.getTitlesAndDates(webDriver);
+                new String(Base64.getDecoder().decode("YWxlbmpi")),
+                new String(Base64.getDecoder().decode("ZGx3amRxbHMxMiE=")));
+        TitlesAndDates titlesAndDates = crawlerService.getTitlesAndDatesOfComNoticeFromPageNum(webDriver,2);
         List<String> titles = titlesAndDates.titles();
-        List<String> dates = titlesAndDates.dates();
+        List<Date> dates = titlesAndDates.dates();
 
         //when
         int randNum = new Random().nextInt(1, 14);
@@ -109,14 +108,14 @@ class CrawlerServiceImplTest {
         //더 최신 공지
         Notice notice1 = Notice.builder().
                 noticeTitle(titles.get(randNum)).
-                noticeDate(new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH).parse(dates.get(randNum))).
+                noticeDate(dates.get(randNum)).
                 noticeType(NoticeType.COM).
                 noticeUrl("url1").
                 build();
         // 더 오래된 공지
         Notice notice2 = Notice.builder().
                 noticeTitle(titles.get(randNum+1)).
-                noticeDate(new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH).parse(dates.get(randNum+1))).
+                noticeDate(dates.get(randNum+1)).
                 noticeType(NoticeType.COM).
                 noticeUrl("url2").
                 build();
@@ -128,7 +127,7 @@ class CrawlerServiceImplTest {
 
         webDriver.close();
         //then
-        assertEquals(randNum, newNoticeCount);
+        assertEquals(CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE +randNum, newNoticeCount);
     }
 
 }
