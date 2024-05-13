@@ -37,6 +37,7 @@ public class CrawlerServiceImpl implements CrawlerService{
     @Autowired
     NoticeRepository noticeRepository;
 
+    /** ================ 공통 공지사항 관련 기능 ================ **/
 
     /**
      * 공통 공지사항에 접근하는 경우 학교 사이트에 로그인 후 게시판 버튼을 클릭하여 게시판 페이지에 진입한다.
@@ -421,6 +422,52 @@ public class CrawlerServiceImpl implements CrawlerService{
             //공통 공지사항 테이블에 저장
             comNoticeRepository.save(comNotice);
         }
+    }
+
+    /** ================ 학과 공지사항 관련 기능 ================ **/
+
+    /**
+     * 학과 공지사항 페이지에 접속해서 제목과 날짜를 가져온다.
+     * @param driver 크롬 드라이버
+     * @param pageNum 가져올 페이지 번호
+     * @param noticeType 학과
+     * @return 공지사항 제목과 날짜 리스트
+     * @throws ParseException
+     */
+    @Override
+    public TitlesAndDates getTitlesAndDatesOfMajorNoticeFromPageNum(WebDriver driver, int pageNum, NoticeType noticeType) throws ParseException {
+        switch (noticeType){
+            case BUS -> driver.get(CrawlerConstants.BUS_NOTICE_BOARD_PAGE);
+            case COS -> driver.get(CrawlerConstants.COS_NOTICE_BOARD_PAGE);
+            case AAI -> driver.get(CrawlerConstants.AAI_NOTICE_BOARD_PAGE);
+            case ESM -> driver.get(CrawlerConstants.ESM_NOTICE_BOARD_PAGE);
+        }
+
+        // 해당 페이지로 이동
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement pageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".paging-wrap > li:nth-of-type(" + pageNum + ")")));
+        pageButton.click();
+
+        // 클래스 이름이 .ev_dhx_terrace 인 모든 요소 가져오기
+        List<WebElement> dynamicElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".board-list-content-wrap")));
+
+        // 타이틀과 날짜를 저장할 리스트 생성
+        List<String> titles = new ArrayList<>();
+        List<Date> dates = new ArrayList<>();
+
+        // 가져온 요소들에서 타이틀과 날짜 추출하여 리스트에 저장
+        for (WebElement element : dynamicElements) {
+            // 타이틀 추출
+            WebElement titleElement = element.findElement(By.cssSelector(".board-list-content-title > a"));
+            titles.add(titleElement.getText());
+
+            // 날짜 추출
+            WebElement dateElement = element.findElement(By.cssSelector("li:nth-child(3)"));
+            dates.add(parseMajorNoticeDateAndFormatting(dateElement.getText()));
+        }
+
+        // TitlesAndDates 객체에 저장해 반환
+        return new TitlesAndDates(titles, dates);
     }
 
     /**

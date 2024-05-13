@@ -100,7 +100,13 @@ public interface CrawlerService {
 
     /**
      * 학과 공지사항 페이지에 접속해서 제목과 날짜를 가져온다.
-    */
+     * @param driver 크롬 드라이버
+     * @param pageNum 가져올 페이지 번호
+     * @param noticeType 학과
+     * @return 공지사항 제목과 날짜 리스트
+     * @throws ParseException
+     */
+    TitlesAndDates getTitlesAndDatesOfMajorNoticeFromPageNum(WebDriver driver, int pageNum, NoticeType noticeType) throws ParseException;
 
     /**
      * 학과 공지사항 새 글이 있는지 확인 후 새 글의 개수를 반환한다. 위에 있음
