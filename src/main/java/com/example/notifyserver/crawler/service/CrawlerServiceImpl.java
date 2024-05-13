@@ -193,14 +193,21 @@ public class CrawlerServiceImpl implements CrawlerService{
             // 페이지에 있는 공통 공지사항들의 제목과 날짜 가져오기
             TitlesAndDates titlesAndDates = getTitlesAndDatesOfComNoticeFromPageNum(driver, i);
 
+
+            // Date 형식인 titlesAndDates.dates()와 firstDate, secondDate를 비교하기 위해 날짜 객체를 문자로 바꿔서 리스트 생성
+            List<String> StringDates = new ArrayList<>();
+            for (Date date : titlesAndDates.dates()) {
+                StringDates.add(date.toString());
+            }
+
             // DB의 첫번째 게시물의 인덱스를 찾으면 새글의 개수를 반환
             if(titlesAndDates.titles().contains(firstTitle)
-                    && titlesAndDates.titles().indexOf(firstTitle) == titlesAndDates.dates().indexOf(firstDate))
+                    && titlesAndDates.titles().indexOf(firstTitle) == StringDates.indexOf(firstDate))
                 return (i-1) * CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE + titlesAndDates.titles().indexOf(firstTitle);
 
                 // DB의 두번째 게시물의 인덱스를 찾으면 첫번째 게시물이 수정이나 삭제되었다고 여기고 두번째 게시글 이후를 새글로 간주 후 개수를 반환
             else if(titlesAndDates.titles().contains(secondTitle)
-                    && titlesAndDates.titles().indexOf(secondTitle) == titlesAndDates.dates().indexOf(secondDate))
+                    && titlesAndDates.titles().indexOf(secondTitle) == StringDates.indexOf(secondDate))
                 return (i-1) * CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE + titlesAndDates.titles().indexOf(secondTitle);
         }
         // 10페이지까지 반복해도 새 게시물이 없는 경우 예외 발생
@@ -222,8 +229,6 @@ public class CrawlerServiceImpl implements CrawlerService{
         String secondDate = top2[1][1]; // 두번째 최신 글의 제목
         boolean hasFirst = false; // 페이지에 가장 최신글의 존재 유무
         boolean hasSecond = false; // 페이지에 두번째 최신글의 존재 유무
-
-        System.out.println("fi = " + firstTitle);
 
         // 가장 최신의 글 2개가 DB의 가장 최신의 글 두개와 일치하는지 확인
         for(int i=0; i<2; i++){
