@@ -3,7 +3,6 @@ package com.example.notifyserver.crawler.service;
 import com.example.notifyserver.com_notice.domain.ComNotice;
 import com.example.notifyserver.com_notice.repository.ComNoticeRepository;
 import com.example.notifyserver.common.constants.CrawlerConstants;
-import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
@@ -51,7 +50,7 @@ public class CrawlerServiceImpl implements CrawlerService{
         // 웹 페이지 열기
         try {
             // 웹 페이지 열기
-            driver.get(NoticeConstants.LOGIN_PAGE);
+            driver.get(CrawlerConstants.LOGIN_PAGE);
         } catch (org.openqa.selenium.NoSuchSessionException e) {
             // 세션 다시 시작
             driver.quit();
@@ -62,7 +61,7 @@ public class CrawlerServiceImpl implements CrawlerService{
             // WebDriver 인스턴스 생성
             driver = new ChromeDriver(options); // 새로운 WebDriver 인스턴스 생성
             // 다시 시도
-            driver.get(NoticeConstants.LOGIN_PAGE);
+            driver.get(CrawlerConstants.LOGIN_PAGE);
         }
         // 아이디와 비밀번호 입력
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // 최대 10초간 대기
@@ -111,7 +110,7 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @return
      */
     @Override
-    public int getNewNoticeCount(NoticeType noticeType, WebDriver driver, String [][] top2) throws InterruptedException, ParseException {
+    public int getNewComNoticeCount(NoticeType noticeType, WebDriver driver, String [][] top2) throws InterruptedException, ParseException {
         // 페이지에서 제목 목록과 날짜 목록을 가져오기
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         TitlesAndDates titlesAndDates = getTitlesAndDatesOfComNoticeFromPageNum(driver, 1);
@@ -132,7 +131,7 @@ public class CrawlerServiceImpl implements CrawlerService{
     @Override
     public TitlesAndDates getTitlesAndDatesOfComNoticeFromPageNum(WebDriver driver, int pageNum) throws ParseException {
 
-        driver.get(NoticeConstants.BOARD_PAGE);
+        driver.get(CrawlerConstants.COM_NOTICE_BOARD_PAGE);
 
         // 두번째 iframe 요소 가져오기
         WebElement secondIframe = driver.findElement(By.xpath("(//iframe)[2]"));
@@ -215,7 +214,7 @@ public class CrawlerServiceImpl implements CrawlerService{
     }
 
     /**
-     * 새 글의 유무를 체크한다.
+     * 새 공통 공지사항의 유무를 체크한다.
      * @param top2 DB에 저장된 가장 최근 게시물 2개
      * @param titles 페이지에서 가져온 제목들
      * @param dates 페이지에서 가져온 날짜들
@@ -239,7 +238,7 @@ public class CrawlerServiceImpl implements CrawlerService{
     }
 
     /**
-     * 해당 페이지 번호에서 공지사항들을 가져옵니다.
+     * 해당 페이지 번호에서 공지사항들을 가져온다.
      * @param username 로그인 ID
      * @param password 로그인 PW
      * @param pageNum 가져올 페이지 번호
@@ -249,7 +248,7 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @throws ParseException
      */
     @Override
-    public List<Notice> getNewNoticesByPageNum(String username, String password, int pageNum, WebDriver oldDriver) throws InterruptedException, ParseException {
+    public List<Notice> getNewComNoticesByPageNum(String username, String password, int pageNum, WebDriver oldDriver) throws InterruptedException, ParseException {
         oldDriver.quit();
         ChromeOptions options = new ChromeOptions().addArguments("--disable-popup-blocking");
         WebDriver driver = new ChromeDriver(options);
@@ -261,7 +260,7 @@ public class CrawlerServiceImpl implements CrawlerService{
         }
 
         // 공지 페이지로 이동
-        driver.get(NoticeConstants.BOARD_PAGE);
+        driver.get(CrawlerConstants.COM_NOTICE_BOARD_PAGE);
 
         // 두번째 iframe 요소 가져오기
         WebElement secondIframe = driver.findElement(By.xpath("(//iframe)[2]"));
@@ -383,7 +382,7 @@ public class CrawlerServiceImpl implements CrawlerService{
     @Override
     public boolean isLoggedIn(WebDriver driver){
         // 웹 페이지 열기
-        driver.get(NoticeConstants.LOGIN_PAGE);
+        driver.get(CrawlerConstants.LOGIN_PAGE);
 
         // 아이디 입력 요소 존재 확인
         try {
@@ -421,6 +420,25 @@ public class CrawlerServiceImpl implements CrawlerService{
             comNotice.setNoticeId(build.getNoticeId());
             //공통 공지사항 테이블에 저장
             comNoticeRepository.save(comNotice);
+        }
+    }
+
+    /**
+     * 페이지에서 가져온 학과 공지사항들의 날짜 텍스트를 Date 객체로 변환한다.
+     * @param dateString 페이지에서 가져온 학과 공지사항의 날짜 텍스트
+     * @return Date 객체로 변환한 학과 공지사항의 날짜
+     * @throws ParseException
+     */
+    @Override
+    public Date parseMajorNoticeDateAndFormatting(String dateString) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            Date date = format.parse(dateString);
+            return date;
+        } catch (ParseException e) {
+            // 둘 다 파싱이 실패하면 예외 처리
+            throw new ParseException(e.getMessage(), e.getErrorOffset());
         }
     }
 }
