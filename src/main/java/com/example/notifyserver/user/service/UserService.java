@@ -2,6 +2,7 @@ package com.example.notifyserver.user.service;
 
 import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
+import com.example.notifyserver.common.service.EmailService;
 import com.example.notifyserver.keyword.domain.Keyword;
 import com.example.notifyserver.keyword.repository.KeywordRepository;
 import com.example.notifyserver.scrap.domain.Scrap;
@@ -11,6 +12,7 @@ import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
     private final KeywordRepository keywordRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public void userLogin(final LoginRequest request){
         String googleId = request.googleId();
@@ -54,5 +59,15 @@ public class UserService {
         scrapRepository.deleteAllByUser(user);
         keywordRepository.deleteAllByUser(user);
         userRepository.deleteByUserId(userId);
+    }
+
+    public void sendKeywordEmail() {
+        String to = "recipient@example.com";
+        String nickname = "John";
+        String keyword = "A";
+        String postId = "123456";
+        String postLink = "http://example.com/post/123456";
+
+        emailService.sendNotificationEmail(to, nickname, keyword, postId);
     }
 }
