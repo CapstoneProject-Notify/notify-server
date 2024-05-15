@@ -1,23 +1,37 @@
 package com.example.notifyserver.common.domain;
 
+import com.example.notifyserver.common.constants.CrawlerConstants;
+
 public enum NoticeType {
     /**
      * 공지 사항 타입
      */
-    COM("com"),    // 공통 공지사항
-    BUS("bus"),    // 경영학과 공지사항
-    COS("cos"),    // 유학동양학과 공지사항
-    AAI("aai"),    // 인공지능융합학과 공지사항
-    ESM("esm");     // 시스템경영공학과 공지사항
+    COM("com", CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE, CrawlerConstants.COM_NOTICE_BOARD_PAGE),    // 공통 공지사항
+    BUS("bus", CrawlerConstants.CRAWLING_BUS_NOTICE_SIZE_PER_PAGE, CrawlerConstants.BUS_NOTICE_BOARD_PAGE),    // 경영학과 공지사항
+    COS("cos", CrawlerConstants.CRAWLING_COS_NOTICE_SIZE_PER_PAGE, CrawlerConstants.COS_NOTICE_BOARD_PAGE),    // 유학동양학과 공지사항
+    AAI("aai", CrawlerConstants.CRAWLING_AAI_NOTICE_SIZE_PER_PAGE, CrawlerConstants.AAI_NOTICE_BOARD_PAGE),    // 인공지능융합학과 공지사항
+    ESM("esm", CrawlerConstants.CRAWLING_ESM_NOTICE_SIZE_PER_PAGE, CrawlerConstants.ESM_NOTICE_BOARD_PAGE);     // 시스템경영공학과 공지사항
 
     private final String type;
+    private final int noticeSizePerPage; // 한 페이지에 크롤링 해오는 공지사항 개수
+    private final String boardUrl; // 공지사항 게시판 페이지 url
 
-    NoticeType(String type) {
+    NoticeType(String type, int noticeSizePerPage, String boardUrl) {
         this.type = type;
+        this.noticeSizePerPage = noticeSizePerPage;
+        this.boardUrl = boardUrl;
     }
 
     public String getType() {
         return type;
+    }
+
+    public int getNoticeSizePerPage() {
+        return noticeSizePerPage;
+    }
+
+    public String getBoardUrl() {
+        return boardUrl;
     }
 
     /**
