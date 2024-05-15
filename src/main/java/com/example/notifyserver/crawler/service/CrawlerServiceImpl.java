@@ -287,7 +287,7 @@ public class CrawlerServiceImpl implements CrawlerService{
     @Override
     public List<Notice> getNewComNoticesByPageNum(String username, String password, int pageNum, WebDriver oldDriver) throws InterruptedException, ParseException {
         oldDriver.quit();
-        ChromeOptions options = new ChromeOptions().addArguments("--disable-popup-blocking");
+        ChromeOptions options = new ChromeOptions().addArguments("--disable-popup-blocking", "--headless");
         WebDriver driver = new ChromeDriver(options);
         // 공지사항들을 저장할 리스트
         List<Notice> notices = new ArrayList<>();
