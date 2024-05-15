@@ -1,7 +1,6 @@
 package com.example.notifyserver.crawler.service;
 
 import com.example.notifyserver.common.constants.CrawlerConstants;
-import com.example.notifyserver.common.constants.NoticeConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.common.repository.NoticeRepository;
@@ -17,6 +16,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Transactional
+@Rollback
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CrawlerServiceImplTest {
     @Autowired
@@ -52,7 +53,7 @@ class CrawlerServiceImplTest {
                 new String(Base64.getDecoder().decode("ZGx3amRxbHMxMiE=")));
         //when
         // 로그인을 해야지만 들어갈 수 있는 링크
-        webDriver.get(NoticeConstants.BOARD_PAGE);
+        webDriver.get(CrawlerConstants.COM_NOTICE_BOARD_PAGE);
         // 로그인 form이 있는지 확인
 
         //then
@@ -129,5 +130,4 @@ class CrawlerServiceImplTest {
         //then
         assertEquals(CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE +randNum, newNoticeCount);
     }
-
 }

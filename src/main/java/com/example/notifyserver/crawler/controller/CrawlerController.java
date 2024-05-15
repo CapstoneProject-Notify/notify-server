@@ -3,7 +3,9 @@ package com.example.notifyserver.crawler.controller;
 import com.example.notifyserver.common.constants.CrawlerConstants;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
+import com.example.notifyserver.common.repository.NoticeRepository;
 import com.example.notifyserver.crawler.service.CrawlerService;
+import jakarta.annotation.PostConstruct;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -20,6 +22,8 @@ public class CrawlerController {
 
     @Autowired
     CrawlerService crawlerService;
+    @Autowired
+    NoticeRepository noticeRepository;
 
     /**
      * 공통 공지사항의 새 글을 가져와 DB에 저장한다.
@@ -55,20 +59,68 @@ public class CrawlerController {
             int newNoticeNumInLastPage = newNoticeCount % CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE;
 
             // 페이지에서 일부만 크롤링해야하는 새 글들을 크롤링 해오기
-            List<Notice> newNoticesFromLastPage = crawlerService.getNewNoticesByPageNum(username, password, newNoticePageCount + 1, driver);
+            List<Notice> newNoticesFromLastPage = crawlerService.getNewComNoticesByPageNum(username, password, newNoticePageCount + 1, driver);
             for(int i=1; i<=newNoticeNumInLastPage; i++){
                 Notice notice = newNoticesFromLastPage.get(CrawlerConstants.CRAWLING_COM_NOTICE_SIZE_PER_PAGE - i);
                 newNotices.add(notice);
             }
             // 페이지를 통채로 가져올 수 있는 만큼 새 글을 크롤링 해오기
             for(int i=newNoticePageCount; i>=1 ;i--){
-                List<Notice> notices = crawlerService.getNewNoticesByPageNum(username, password, i, driver);
+                List<Notice> notices = crawlerService.getNewComNoticesByPageNum(username, password, i, driver);
                 for (Notice notice : notices) {
                     newNotices.add(notice);
                 }
             }
             // 가져온 새 공통 공지사항들 DB에 저장
             crawlerService.saveNewComNotices(newNotices);
+        }
+    }
+
+    /**
+     * 학과 공지사항의 새 글을 가져와 DB에 저장한다.
+     * @param noticeType 공지사항 타입
+     * @throws InterruptedException
+     * @throws ParseException
+     */
+    public void getMajorNotice(NoticeType noticeType) throws InterruptedException, ParseException {
+        // Headless 모드로 Chrome 실행
+        ChromeOptions options = new ChromeOptions();
+        // Headless 모드 활성화
+        options.addArguments("--headless");
+        // WebDriver 인스턴스 생성
+        WebDriver driver = new ChromeDriver(options);
+
+        // 새 글의 개수
+        int newNoticeCount = crawlerService.getNewNoticeCount(
+                noticeType,
+                driver,
+                crawlerService.getLastTwoNotices(noticeType));
+
+        // 새 글이 있으면
+        if(newNoticeCount > 0){
+            // 새 글들을 저장할 리스트
+            List<Notice> newNotices = new ArrayList<>();
+
+            // 새 글을 크롤링할 페이지 수
+            int newNoticePageCount = newNoticeCount / noticeType.getNoticeSizePerPage();
+            // 새 글 수를 페이지 수로 나누었을 때 떨어지는 나머지 값
+            int newNoticeNumInLastPage = newNoticeCount % noticeType.getNoticeSizePerPage();
+
+            // 페이지에서 일부만 크롤링해야하는 새 글들을 크롤링 해오기
+            List<Notice> newNoticesFromLastPage = crawlerService.getNewMajorNoticesByPageNum(newNoticePageCount + 1, noticeType, driver);
+            for(int i=1; i<=newNoticeNumInLastPage; i++){
+                Notice notice = newNoticesFromLastPage.get(noticeType.getNoticeSizePerPage() - i);
+                newNotices.add(notice);
+            }
+            // 페이지를 통채로 가져올 수 있는 만큼 새 글을 크롤링 해오기
+            for(int i=newNoticePageCount; i>=1 ;i--){
+                List<Notice> notices = crawlerService.getNewMajorNoticesByPageNum(i, noticeType, driver);
+                for (Notice notice : notices) {
+                    newNotices.add(notice);
+                }
+            }
+            // 가져온 새 공통 공지사항들 DB에 저장
+            crawlerService.saveNewMajorNotices(newNotices, noticeType);
         }
     }
 }
