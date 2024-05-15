@@ -5,7 +5,7 @@ import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.common.repository.NoticeRepository;
 import com.example.notifyserver.crawler.service.CrawlerService;
-import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,11 +14,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 @Controller
+@Slf4j
 public class CrawlerController {
 
     @Autowired
@@ -75,6 +77,7 @@ public class CrawlerController {
             }
             // 가져온 새 공통 공지사항들 DB에 저장
             crawlerService.saveNewComNotices(newNotices);
+            log.info("==== 새 공통 공지사항 저장 완료 시각: "+ String.valueOf(LocalDateTime.now())+"====");
         }
     }
 
@@ -124,6 +127,8 @@ public class CrawlerController {
             }
             // 가져온 새 공통 공지사항들 DB에 저장
             crawlerService.saveNewMajorNotices(newNotices, noticeType);
+            log.info("==== 새 학과 공지사항 저장 완료 시각: "+ String.valueOf(LocalDateTime.now())+"====");
+
         }
     }
 }
