@@ -1,12 +1,15 @@
 package com.example.notifyserver.cos_notice.domain;
 
-import com.example.notifyserver.common.domain.Notice;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
-public class CosNotice extends Notice {
-
+@Setter
+public class CosNotice {
+    @Id
+    private Long noticeId;
 
 }

@@ -1,9 +1,10 @@
 package com.example.notifyserver.cos_notice.repository;
 
-import com.example.notifyserver.common.repository.NoticeRepository;
 import com.example.notifyserver.cos_notice.domain.CosNotice;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CosNoticeRepository extends NoticeRepository<CosNotice, Long> {
+public interface CosNoticeRepository extends JpaRepository<CosNotice, Long> {
+    CosNotice save(CosNotice notice);
 }
