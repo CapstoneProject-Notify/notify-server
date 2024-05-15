@@ -1,5 +1,9 @@
 package com.example.notifyserver.crawler.service;
 
+import com.example.notifyserver.aai_notice.domain.AaiNotice;
+import com.example.notifyserver.aai_notice.repository.AaiNoticeRepository;
+import com.example.notifyserver.bus_notice.domain.BusNotice;
+import com.example.notifyserver.bus_notice.repository.BusNoticeRepository;
 import com.example.notifyserver.com_notice.domain.ComNotice;
 import com.example.notifyserver.com_notice.repository.ComNoticeRepository;
 import com.example.notifyserver.common.constants.CrawlerConstants;
@@ -8,8 +12,12 @@ import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.repository.NoticeRepository;
+import com.example.notifyserver.cos_notice.domain.CosNotice;
+import com.example.notifyserver.cos_notice.repository.CosNoticeRepository;
 import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import com.example.notifyserver.crawler.repository.CrawlerRepository;
+import com.example.notifyserver.esm_notice.domain.EsmNotice;
+import com.example.notifyserver.esm_notice.repository.EsmNoticeRepository;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -33,7 +41,16 @@ public class CrawlerServiceImpl implements CrawlerService{
     @Autowired
     ComNoticeRepository comNoticeRepository;
     @Autowired
+    BusNoticeRepository busNoticeRepository;
+    @Autowired
+    AaiNoticeRepository aaiNoticeRepository;
+    @Autowired
+    CosNoticeRepository cosNoticeRepository;
+    @Autowired
+    EsmNoticeRepository esmNoticeRepository;
+    @Autowired
     NoticeRepository noticeRepository;
+
 
 
     /** ================ 모든 공지사항 관련 기능 (공통, 학과 모두 사용 가능) ================ **/
@@ -485,8 +502,6 @@ public class CrawlerServiceImpl implements CrawlerService{
 
     /**
      * 해당 페이지 번호에서 학과 공지사항들을 가져온다.
-     * @param username 로그인 ID
-     * @param password 로그인 PW
      * @param pageNum 가져올 페이지 번호
      * @param noticeType 공지사항 타입
      * @param driver 크롬 드라이버
@@ -495,7 +510,7 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @throws ParseException
      */
     @Override
-    public List<Notice> getNewMajorNoticesByPageNum(String username, String password, int pageNum, NoticeType noticeType, WebDriver driver) throws InterruptedException, ParseException{
+    public List<Notice> getNewMajorNoticesByPageNum(int pageNum, NoticeType noticeType, WebDriver driver) throws InterruptedException, ParseException{
 
         // 공지사항들을 저장할 리스트
         List<Notice> notices = new ArrayList<>();
@@ -558,6 +573,60 @@ public class CrawlerServiceImpl implements CrawlerService{
         } catch (ParseException e) {
             // 둘 다 파싱이 실패하면 예외 처리
             throw new ParseException(e.getMessage(), e.getErrorOffset());
+        }
+    }
+
+    /**
+     * 새 학과 공지사항들을 DB에 저장한다.
+     * @param newNotices 새 학과 공지사항들
+     * @param noticeType 공지사항 타입
+     */
+    @Override
+    public void saveNewMajorNotices(List<Notice> newNotices, NoticeType noticeType) {
+        for (Notice notice : newNotices) {
+            // 공지사항 객체화
+            Notice build = Notice.builder()
+                    .noticeTitle(notice.getNoticeTitle())
+                    .noticeDate(notice.getNoticeDate())
+                    .noticeUrl(notice.getNoticeUrl())
+                    .noticeType(notice.getNoticeType())
+                    .build();
+            // 공지사항 테이블에 저장
+            noticeRepository.save(build);
+            switch (noticeType){
+                case BUS:
+                    // 경영학과 공지사항 객체화
+                   BusNotice busNotice = new BusNotice();
+                    // 공지사항 테이블의 아이디를 가져오기
+                    busNotice.setNoticeId(build.getNoticeId());
+                    // 경영학과 공지사항 테이블에 저장
+                    busNoticeRepository.save((BusNotice) busNotice);
+                    break;
+                case AAI:
+                    // 인공지능융합학과 공지사항 객체화
+                    AaiNotice aaiNotice = new AaiNotice();
+                    // 공지사항 테이블의 아이디를 가져오기
+                    aaiNotice.setNoticeId(build.getNoticeId());
+                    // 인공지능융합학과 공지사항 테이블에 저장
+                    aaiNoticeRepository.save((AaiNotice) aaiNotice);
+                    break;
+                case COS:
+                    // 유학동양학과 공지사항 객체화
+                    CosNotice cosNotice = new CosNotice();
+                    // 공지사항 테이블의 아이디를 가져오기
+                    cosNotice.setNoticeId(build.getNoticeId());
+                    // 유학동양학과 공지사항 테이블에 저장
+                    cosNoticeRepository.save((CosNotice) cosNotice);
+                    break;
+                case ESM:
+                    // 시스템경영공학과 공지사항 객체화
+                    EsmNotice esmNotice = new EsmNotice();
+                    // 공지사항 테이블의 아이디를 가져오기
+                    esmNotice.setNoticeId(build.getNoticeId());
+                    // 시스템경영공학과 공지사항 테이블에 저장
+                    esmNoticeRepository.save((EsmNotice) esmNotice);
+                    break;
+            }
         }
     }
 }
