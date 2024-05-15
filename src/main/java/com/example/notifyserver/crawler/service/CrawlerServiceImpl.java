@@ -89,7 +89,7 @@ public class CrawlerServiceImpl implements CrawlerService{
         // 공통 공지사항인 경우 첫 페이지의 글들을 가져오기
         if(noticeType == NoticeType.COM) titlesAndDates = getTitlesAndDatesOfComNoticeFromPageNum(driver, 1);
             // 학과 공지사항인 경우 첫 페이지의 글들을 가져오기
-        else getTitlesAndDatesOfMajorNoticeFromPageNum(driver, 1, noticeType);
+        else titlesAndDates = getTitlesAndDatesOfMajorNoticeFromPageNum(driver, 1, noticeType);
 
         boolean hasNewNotice = newNoticeCheck(top2, titlesAndDates.titles(), titlesAndDates.dates());
         // 새 글이 없는 경우 0을 반환
@@ -367,8 +367,19 @@ public class CrawlerServiceImpl implements CrawlerService{
         driver.close();
 
         // noticeDate 오래된 순으로 정렬(나중에 DB에 넣을 때 오래된 것을 먼저 삽입해야하므로)
-        Collections.reverse(notices);
+        Collections.sort(notices, new DateComparator());
         return notices;
+    }
+
+    /**
+     * 날짜를 오래된 순으로 정렬하기 위해 비교한다.
+     */
+    public class DateComparator implements Comparator<Notice> {
+        @Override
+        public int compare(Notice notice1, Notice notice2) {
+            // Date 필드를 기준으로 내림차순 정렬
+            return notice1.getNoticeDate().compareTo(notice2.getNoticeDate());
+        }
     }
 
     /**
@@ -478,22 +489,23 @@ public class CrawlerServiceImpl implements CrawlerService{
         WebElement pageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".paging-wrap > li:nth-of-type(" + pageNum + ")")));
         pageButton.click();
 
-        // 클래스 이름이 .board-list-content-wrap 인 모든 요소 가져오기
-        List<WebElement> dynamicElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".board-list-content-wrap")));
+        List<WebElement> titleAndUrls = driver.findElements(By.cssSelector(
+                "dt.board-list-content-title:not(.board-list-content-top) a"));
+
+        List<WebElement> pageDates = driver.findElements(By.cssSelector("dt.board-list-content-title:not(.board-list-content-top) +dd li:nth-of-type(3)"));        // 요소의 자식인 li 태그들 가져오기
 
         // 타이틀과 날짜를 저장할 리스트 생성
         List<String> titles = new ArrayList<>();
         List<Date> dates = new ArrayList<>();
+        for(int i=0; i<noticeType.getNoticeSizePerPage(); i++) {
+            // 페이지에서 제목을 찾아 문자열로 저장
+            String noticeTitle = titleAndUrls.get(i).getText();
+            titles.add(noticeTitle);
 
-        // 가져온 요소들에서 타이틀과 날짜 추출하여 리스트에 저장
-        for (WebElement element : dynamicElements) {
-            // 타이틀 추출
-            WebElement titleElement = element.findElement(By.cssSelector(".board-list-content-title > a"));
-            titles.add(titleElement.getText());
-
-            // 날짜 추출
-            WebElement dateElement = element.findElement(By.cssSelector("li:nth-child(3)"));
-            dates.add(parseMajorNoticeDateAndFormatting(dateElement.getText()));
+            // 페이지에서 공지 날짜를 찾아 날짜 객체로 변환
+            String dateText = pageDates.get(i).getText();
+            Date noticeDate = parseMajorNoticeDateAndFormatting(dateText);
+            dates.add(noticeDate);
         }
 
         // TitlesAndDates 객체에 저장해 반환
