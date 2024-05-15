@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import java.text.ParseException;
@@ -28,6 +29,7 @@ public class CrawlerController {
     /**
      * 공통 공지사항의 새 글을 가져와 DB에 저장한다.
      */
+    @Scheduled(cron = "0 */30 * * * *") // 매 30분마다 실행
     public void getComNotice() throws InterruptedException, ParseException {
         // Headless 모드로 Chrome 실행
         ChromeOptions options = new ChromeOptions();
@@ -82,6 +84,7 @@ public class CrawlerController {
      * @throws InterruptedException
      * @throws ParseException
      */
+    @Scheduled(cron = "0 */30 * * * *") // 매 30분마다 실행
     public void getMajorNotice(NoticeType noticeType) throws InterruptedException, ParseException {
         // Headless 모드로 Chrome 실행
         ChromeOptions options = new ChromeOptions();
