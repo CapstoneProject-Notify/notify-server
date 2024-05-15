@@ -350,8 +350,7 @@ public class CrawlerServiceImpl implements CrawlerService{
         driver.close();
 
         // noticeDate 오래된 순으로 정렬(나중에 DB에 넣을 때 오래된 것을 먼저 삽입해야하므로)
-        Comparator<Notice> byNoticeDate = Comparator.comparing(Notice::getNoticeDate);
-        Collections.sort(notices, byNoticeDate);
+        Collections.reverse(notices);
         return notices;
     }
 
@@ -455,14 +454,9 @@ public class CrawlerServiceImpl implements CrawlerService{
      */
     @Override
     public TitlesAndDates getTitlesAndDatesOfMajorNoticeFromPageNum(WebDriver driver, int pageNum, NoticeType noticeType) throws ParseException {
-        switch (noticeType){
-            case BUS -> driver.get(CrawlerConstants.BUS_NOTICE_BOARD_PAGE);
-            case COS -> driver.get(CrawlerConstants.COS_NOTICE_BOARD_PAGE);
-            case AAI -> driver.get(CrawlerConstants.AAI_NOTICE_BOARD_PAGE);
-            case ESM -> driver.get(CrawlerConstants.ESM_NOTICE_BOARD_PAGE);
-        }
 
         // 해당 페이지로 이동
+        driver.get(noticeType.getBoardUrl());
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         WebElement pageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".paging-wrap > li:nth-of-type(" + pageNum + ")")));
         pageButton.click();
@@ -488,6 +482,65 @@ public class CrawlerServiceImpl implements CrawlerService{
         // TitlesAndDates 객체에 저장해 반환
         return new TitlesAndDates(titles, dates);
     }
+
+    /**
+     * 해당 페이지 번호에서 학과 공지사항들을 가져온다.
+     * @param username 로그인 ID
+     * @param password 로그인 PW
+     * @param pageNum 가져올 페이지 번호
+     * @param noticeType 공지사항 타입
+     * @param driver 크롬 드라이버
+     * @return 해당 페이지 번호의 공지사항들 리스트
+     * @throws InterruptedException
+     * @throws ParseException
+     */
+    @Override
+    public List<Notice> getNewMajorNoticesByPageNum(String username, String password, int pageNum, NoticeType noticeType, WebDriver driver) throws InterruptedException, ParseException{
+
+        // 공지사항들을 저장할 리스트
+        List<Notice> notices = new ArrayList<>();
+
+        // 공지 페이지로 이동
+        driver.get(noticeType.getBoardUrl());
+
+        // 해당 페이지로 이동
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement pageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".paging-wrap > li:nth-of-type(" + pageNum + ")")));
+        pageButton.click();
+
+        //페이지의 이동을 위해 0.5초 대기
+        Thread.sleep(500);
+
+
+        List<WebElement> titleAndUrls = driver.findElements(By.cssSelector(
+                "dt.board-list-content-title:not(.board-list-content-top) a"));
+
+        List<WebElement> dates = driver.findElements(By.cssSelector("dt.board-list-content-title:not(.board-list-content-top) +dd li:nth-of-type(3)"));        // 요소의 자식인 li 태그들 가져오기
+
+        for(int i=0; i<noticeType.getNoticeSizePerPage(); i++){
+            // 페이지에서 URL을 찾아 문자열로 저장
+            String noticeTitle = titleAndUrls.get(i).getText();
+            String noticeUrl = titleAndUrls.get(i).getAttribute("href");
+
+            // 페이지에서 공지 날짜를 찾아 날짜 객체로 변환
+            String dateText = dates.get(i).getText();
+            Date noticeDate = parseMajorNoticeDateAndFormatting(dateText);
+
+            // 공지 객체로 만들기
+            Notice notice = Notice.builder()
+                    .noticeTitle(noticeTitle)
+                    .noticeDate(noticeDate)
+                    .noticeUrl(noticeUrl)
+                    .noticeType(noticeType)
+                    .build();
+            notices.add(notice);
+        }
+
+        // noticeDate 오래된 순으로 정렬(나중에 DB에 넣을 때 오래된 것을 먼저 삽입해야하므로)
+        Collections.reverse(notices);
+        return notices;
+    }
+
 
     /**
      * 페이지에서 가져온 학과 공지사항들의 날짜 텍스트를 Date 객체로 변환한다.

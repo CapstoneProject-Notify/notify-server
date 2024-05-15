@@ -117,7 +117,16 @@ public interface CrawlerService {
 
     /**
      * 해당 페이지 번호에서 학과 공지사항들을 가져온다.
+     * @param username 로그인 ID
+     * @param password 로그인 PW
+     * @param pageNum 가져올 페이지 번호
+     * @param noticeType 공지사항 타입
+     * @param driver 크롬 드라이버
+     * @return 해당 페이지 번호의 공지사항들 리스트
+     * @throws InterruptedException
+     * @throws ParseException
      */
+    List<Notice> getNewMajorNoticesByPageNum(String username, String password, int pageNum, NoticeType noticeType, WebDriver driver) throws InterruptedException, ParseException;
 
     /**
      * 페이지에서 가져온 학과 공지사항들의 날짜 텍스트를 Date 객체로 변환한다.
