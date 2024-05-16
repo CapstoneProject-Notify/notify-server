@@ -1,12 +1,14 @@
 package com.example.notifyserver.aai_notice.domain;
 
-import com.example.notifyserver.common.domain.Notice;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
-public class AaiNotice extends Notice  {
-
-
+@Setter
+public class AaiNotice {
+    @Id
+    private Long noticeId;
 }

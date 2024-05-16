@@ -32,6 +32,14 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
+    //Jsoup
+    implementation 'org.jsoup:jsoup:1.14.3'
+
+    // Selenium WebDriver
+    implementation 'org.seleniumhq.selenium:selenium-java:4.1.0'
+    // Chrome WebDriver
+    implementation 'io.github.bonigarcia:webdrivermanager:5.0.3'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -48,4 +56,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// Chrome WebDriver를 다운로드하고 설정하는 작업을 수행
+tasks.register('setupChromeWebDriver', Exec) {
+    dependsOn 'clean'
+
+    executable = 'java'
+    workingDir = projectDir
+
+    args '-jar', 'gradle/libs/webdrivermanager-5.0.3.jar', '--target', 'bin', '--browser', 'chrome'
 }

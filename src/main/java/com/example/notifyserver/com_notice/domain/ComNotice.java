@@ -1,11 +1,15 @@
 package com.example.notifyserver.com_notice.domain;
 
-import com.example.notifyserver.common.domain.Notice;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
-public class ComNotice extends Notice {
+@Setter
+public class ComNotice{
+    @Id
+    private Long noticeId;
 
 }

@@ -6,6 +6,7 @@ import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.scrap.repository.ScrapRepository;
 import com.example.notifyserver.user.domain.User;
+import com.example.notifyserver.user.domain.UserMajor;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -88,7 +89,7 @@ class ScrapServiceImplTest {
                 .googleId("구글아이디")
                 .nickName("닉네임")
                 .email("이메일")
-                .userMajor("bus")
+                .userMajor(UserMajor.BUS)
                 .build();
 
         Notice notice = Notice.builder()
