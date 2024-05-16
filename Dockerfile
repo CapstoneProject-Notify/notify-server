@@ -10,8 +10,8 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.
     yum -y install ./google-chrome-stable_current_x86_64.rpm && \
     rm -f google-chrome-stable_current_x86_64.rpm
 
-# Chrome WebDriver 설치
-RUN CHROME_VERSION=$(google-chrome --version | grep -oP '([0-9]+)') && \
+# Chrome 버전 및 Chrome WebDriver 최신 버전 가져오기
+RUN CHROME_VERSION=$(google-chrome --version | awk -F '[ .]' '/Chrome/{print $3}') && \
     LATEST_CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") && \
     wget -q "https://chromedriver.storage.googleapis.com/$LATEST_CHROMEDRIVER_VERSION/chromedriver_linux64.zip" -O /tmp/chromedriver.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
