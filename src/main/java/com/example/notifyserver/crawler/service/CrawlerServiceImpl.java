@@ -18,6 +18,7 @@ import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import com.example.notifyserver.crawler.repository.CrawlerRepository;
 import com.example.notifyserver.esm_notice.domain.EsmNotice;
 import com.example.notifyserver.esm_notice.repository.EsmNoticeRepository;
+import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
@@ -449,6 +450,7 @@ public class CrawlerServiceImpl implements CrawlerService{
      * 새 공통 공지사항들을 DB에 저장한다.
      * @param newNotices 새 공통 공지사항들 리스트
      */
+    @Transactional
     public void saveNewComNotices(List<Notice> newNotices) {
         for (Notice notice : newNotices) {
             // 공지사항 객체화
@@ -594,6 +596,7 @@ public class CrawlerServiceImpl implements CrawlerService{
      * @param noticeType 공지사항 타입
      */
     @Override
+    @Transactional
     public void saveNewMajorNotices(List<Notice> newNotices, NoticeType noticeType) {
         for (Notice notice : newNotices) {
             // 공지사항 객체화

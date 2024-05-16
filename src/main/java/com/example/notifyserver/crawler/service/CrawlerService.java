@@ -3,6 +3,7 @@ package com.example.notifyserver.crawler.service;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.crawler.dto.TitlesAndDates;
+import jakarta.transaction.Transactional;
 import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Service;
 
@@ -101,6 +102,7 @@ public interface CrawlerService {
      * 새 공통 공지사항들을 DB에 저장한다.
      * @param newNotices 새 공통 공지사항들 리스트
      */
+    @Transactional
     void saveNewComNotices(List<Notice> newNotices);
 
     /** ================ 학과 공지사항 관련 기능 ================ **/
@@ -139,6 +141,7 @@ public interface CrawlerService {
      * @param newNotices 새 학과 공지사항들
      * @param noticeType 공지사항 타입
      */
+    @Transactional
     void saveNewMajorNotices(List<Notice> newNotices, NoticeType noticeType);
 
 }
