@@ -95,7 +95,7 @@ public class UserService {
         String to = user.getEmail();
         String nickname =user.getNickName();
         Long postId = notice.getNoticeId();
-        String postLink = "http://localhost:8080/notice/" + postId.toString();
+        String postLink = notice.getNoticeUrl();
 
         emailService.sendNotificationEmail(to, nickname, keyword, postLink);
     }

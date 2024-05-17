@@ -57,11 +57,5 @@ public class UserController {
             return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
         }
     }
-
-    @PostMapping("/send")
-    public ResponseEntity<String> sendEmailNotification(@RequestBody Notice notice) {
-        userService.findAndSendEmail(notice);
-        return ResponseEntity.ok("Email notifications sent successfully.");
-    }
 }
 
