@@ -3,6 +3,7 @@ package com.example.notifyserver.user.service;
 import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
+import com.example.notifyserver.common.repository.NoticeRepository;
 import com.example.notifyserver.common.service.EmailService;
 import com.example.notifyserver.keyword.domain.Keyword;
 import com.example.notifyserver.keyword.repository.KeywordRepository;
@@ -31,6 +32,7 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
+    private final NoticeRepository noticeRepository;
 
     public void userLogin(final LoginRequest request){
         String googleId = request.googleId();
