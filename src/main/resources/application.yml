@@ -19,8 +19,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: notify701@gmail.com
-    password: ates lwlh qwsq ldcg
+    username: ${{ secrets.MAIL_USERNAME }}
+    password: ${{ secrets.MAIL_PASSWORD }}
     properties:
         mail:
           smtp:
