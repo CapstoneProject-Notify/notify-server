@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import java.util.Date;
 
 @Entity
 @Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,14 +25,11 @@ public class Notice extends BaseTimeEntity{
     @NotNull
     private String noticeTitle;
 
-    @NotNull
     private String noticeUrl;
 
-    @NotNull
     private Date noticeDate;
 
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private NoticeType noticeType;
 

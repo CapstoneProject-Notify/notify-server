@@ -1,5 +1,6 @@
 package com.example.notifyserver.user.controller;
 
+import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.dto.ApiResponse;
 import com.example.notifyserver.common.dto.ErrorResponse;
 import com.example.notifyserver.common.dto.SuccessNonDataResponse;
@@ -10,6 +11,7 @@ import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

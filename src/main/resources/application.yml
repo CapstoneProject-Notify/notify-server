@@ -16,6 +16,18 @@ spring:
         show_sql: true
         format_sql: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${{ secrets.MAIL_USERNAME }}
+    password: ${{ secrets.MAIL_PASSWORD }}
+    properties:
+        mail:
+          smtp:
+              auth: true
+              starttls:
+                enable: true
+
 
 springdoc:
   packages-to-scan: com.example.notifyserver
