@@ -10,6 +10,7 @@ import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ApiResponse userLogin(@RequestBody LoginRequest request) {
+    public ApiResponse userLogin(@RequestBody LoginRequest request, HttpSession session) {
         try {
-            userService.userLogin(request);
+            userService.userLogin(request, session);
             return SuccessNonDataResponse.success(SuccessCode.LOGIN_SUCCESS);
         } catch (NotFoundUserException e) {
             return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
