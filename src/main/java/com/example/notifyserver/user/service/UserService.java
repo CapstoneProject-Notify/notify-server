@@ -13,6 +13,7 @@ import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class UserService {
     private EmailService emailService;
     private final NoticeRepository noticeRepository;
 
-    public void userLogin(final LoginRequest request){
+    public void userLogin(final LoginRequest request, HttpSession session){
         String googleId = request.googleId();
         Optional<User> findUser = userRepository.findByGoogleId(googleId);
         if(findUser.isEmpty()){
@@ -46,7 +47,10 @@ public class UserService {
             throw new NotFoundUserException(USER_NOT_FOUND_EXCEPTION);
         } else if(findUser.get().getEmail() == null){
             throw new NotFoundUserException(USER_NOT_FOUND_EXCEPTION);
+        } else {
+            session.setAttribute("user", findUser.get());
         }
+
     }
 
     @Transactional
