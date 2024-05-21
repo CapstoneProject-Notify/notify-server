@@ -19,7 +19,6 @@ import jakarta.mail.internet.MimeMessage;
 @Component
 public class EmailService {
 
-    @Autowired
     private JavaMailSender emailSender;
 
     public void sendNotificationEmail(String to, String nickname, String keyword, String postLink) {
