@@ -28,7 +28,10 @@ spring:
               starttls:
                 enable: true
 
-
+logging:
+  level:
+    root: DEBUG
+    
 springdoc:
   packages-to-scan: com.example.notifyserver
   default-consumes-media-type: application/json;charset=UTF-8
