@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface KeywordRepository extends JpaRepository<Keyword, Long> {
     void deleteAllByUser(User user);
-    List<Keyword> findAllByUserId(Long userId);
+    List<Keyword> findAllByUserUserId(Long userId);
 }

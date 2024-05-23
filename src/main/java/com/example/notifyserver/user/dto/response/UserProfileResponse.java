@@ -8,6 +8,6 @@ public record UserProfileResponse(
         String nickname,
         String email,
         String major,
-        List<Keyword> keywords
+        List<String> keywords
 ) {
 }

@@ -2,6 +2,7 @@ package com.example.notifyserver.common.exception.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -16,7 +17,8 @@ public enum SuccessCode {
 
     SAVE_SCRAP_SUCCESS(HttpStatus.OK, "스크랩 성공입니다."),
     DELETE_SCRAP_SUCCESS(HttpStatus.OK, "스크랩 제거 성공입니다."),
-    GET_SCRAP_SUCCESS(HttpStatus.OK, "스크랩 조회 성공입니다.");
+    GET_SCRAP_SUCCESS(HttpStatus.OK, "스크랩 조회 성공입니다."),
+    GET_PROFILE_SUCCESS(HttpStatus.OK, "프로필 조회 성공입니다");
 
 
     private final HttpStatus httpStatus;
