@@ -9,14 +9,15 @@ import com.example.notifyserver.scrap.repository.ScrapRepository;
 import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
+import com.example.notifyserver.user.dto.response.UserProfileResponse;
 import com.example.notifyserver.user.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.notifyserver.common.exception.enums.ErrorCode.USER_NOT_FOUND_EXCEPTION;
 
@@ -60,6 +61,23 @@ public class UserService {
         keywordRepository.deleteAllByUser(user);
         userRepository.deleteByUserId(userId);
     }
+
+    @Transactional
+    public UserProfileResponse getUserProfile(final String googleId){
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
+        Long userId = user.getUserId();
+        String nickName = user.getNickName();
+        String email = user.getEmail();
+        String major = user.getUserMajor().getValue();
+        List <String> keywords = keywordRepository.findAllByUserUserId(userId)
+                .stream()
+                .map(Keyword::getUserKeyword)
+                .collect(Collectors.toList());;
+
+        UserProfileResponse userProfileResponse = new UserProfileResponse(nickName, email, major, keywords);
+        return userProfileResponse;
+    }
+
 
     public void findAndSendEmail(Notice notice) {
         String noticeTitle = notice.getNoticeTitle();

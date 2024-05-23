@@ -17,7 +17,7 @@ public class Keyword {
     private Long keywordId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     @NotNull
     private User user;
 
