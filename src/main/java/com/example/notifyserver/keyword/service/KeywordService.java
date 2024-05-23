@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.notifyserver.common.exception.enums.ErrorCode.KEYWORD_NOT_FOUND_EXCEPTION;
 import static com.example.notifyserver.common.exception.enums.ErrorCode.USER_NOT_FOUND_EXCEPTION;
 
 @Service
@@ -27,5 +28,12 @@ public class KeywordService {
                 .user(user)
                 .build();
         keywordRepository.save(newKeyword);
+    }
+
+    @Transactional
+    public void deleteKeyword(final KeywordAddRequest request, final String googleId){
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
+        Keyword keyword = keywordRepository.findByUserAndUserKeyword(user, request.keyword()).orElseThrow(() -> new NotFoundUserException(KEYWORD_NOT_FOUND_EXCEPTION));
+        keywordRepository.deleteByKeywordId(keyword.getKeywordId());
     }
 }

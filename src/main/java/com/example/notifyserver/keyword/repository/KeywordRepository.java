@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface KeywordRepository extends JpaRepository<Keyword, Long> {
     void deleteAllByUser(User user);
     List<Keyword> findAllByUserUserId(Long userId);
+    Optional<Keyword> findByUserAndUserKeyword(User user, String userKeyword);
+    void deleteByKeywordId(Long keywordId);
+
 }
