@@ -9,7 +9,6 @@ import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
-import com.example.notifyserver.user.dto.response.UserProfileResponse;
 import com.example.notifyserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
