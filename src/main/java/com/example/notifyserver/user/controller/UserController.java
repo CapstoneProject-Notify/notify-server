@@ -12,6 +12,7 @@ import com.example.notifyserver.user.dto.request.RegisterRequest;
 import com.example.notifyserver.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +57,17 @@ public class UserController {
             return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
         } catch (Exception e) {
             return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<String> createNotice(@RequestBody Notice notice) {
+        try {
+            userService.findAndSendEmail(notice);
+            return ResponseEntity.ok("Notice created and emails sent successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the notice.");
         }
     }
 }
