@@ -28,4 +28,16 @@ public class KeywordController {
             return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
         }
     }
+
+    @DeleteMapping
+    public ApiResponse deleteKeyword(@RequestHeader("googleId") String googleId, @RequestBody KeywordAddRequest request) {
+        try {
+            keywordService.deleteKeyword(request, googleId);
+            return SuccessNonDataResponse.success(SuccessCode.DELETE_KEYWORD_SUCCESS);
+        } catch (NotFoundUserException e) {
+            return ErrorResponse.error(ErrorCode.KEYWORD_NOT_FOUND_EXCEPTION);
+        } catch (Exception e) {
+            return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
+        }
+    }
 }
