@@ -1,19 +1,17 @@
 package com.example.notifyserver.user.controller;
 
-import com.example.notifyserver.common.domain.Notice;
 import com.example.notifyserver.common.dto.ApiResponse;
 import com.example.notifyserver.common.dto.ErrorResponse;
 import com.example.notifyserver.common.dto.SuccessNonDataResponse;
+import com.example.notifyserver.common.dto.SuccessResponse;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
+import com.example.notifyserver.user.dto.response.UserProfileResponse;
 import com.example.notifyserver.user.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,9 +22,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ApiResponse userLogin(@RequestBody LoginRequest request, HttpSession session) {
+    public ApiResponse userLogin(@RequestBody LoginRequest request) {
         try {
-            userService.userLogin(request, session);
+            userService.userLogin(request);
             return SuccessNonDataResponse.success(SuccessCode.LOGIN_SUCCESS);
         } catch (NotFoundUserException e) {
             return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
@@ -60,14 +58,14 @@ public class UserController {
         }
     }
 
-    @PostMapping("/send")
-    public ResponseEntity<String> createNotice(@RequestBody Notice notice) {
-        try {
-            userService.findAndSendEmail(notice);
-            return ResponseEntity.ok("Notice created and emails sent successfully.");
+    @GetMapping("/profile")
+    public ApiResponse userProfile(@RequestHeader("googleId") String googleId){
+        try{
+            return SuccessResponse.success(SuccessCode.GET_PROFILE_SUCCESS, userService.getUserProfile(googleId));
+        } catch (NotFoundUserException e) {
+            return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the notice.");
+            return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
         }
     }
 }

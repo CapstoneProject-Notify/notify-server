@@ -1,25 +1,23 @@
 package com.example.notifyserver.user.service;
 
 import com.example.notifyserver.common.domain.Notice;
-import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
-import com.example.notifyserver.common.repository.NoticeRepository;
 import com.example.notifyserver.common.service.EmailService;
 import com.example.notifyserver.keyword.domain.Keyword;
 import com.example.notifyserver.keyword.repository.KeywordRepository;
-import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.scrap.repository.ScrapRepository;
 import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
+import com.example.notifyserver.user.dto.response.UserProfileResponse;
 import com.example.notifyserver.user.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.notifyserver.common.exception.enums.ErrorCode.USER_NOT_FOUND_EXCEPTION;
 
@@ -33,9 +31,8 @@ public class UserService {
 
     @Autowired
     private EmailService emailService;
-    private final NoticeRepository noticeRepository;
 
-    public void userLogin(final LoginRequest request, HttpSession session){
+    public void userLogin(final LoginRequest request){
         String googleId = request.googleId();
         Optional<User> findUser = userRepository.findByGoogleId(googleId);
         if(findUser.isEmpty()){
@@ -47,10 +44,7 @@ public class UserService {
             throw new NotFoundUserException(USER_NOT_FOUND_EXCEPTION);
         } else if(findUser.get().getEmail() == null){
             throw new NotFoundUserException(USER_NOT_FOUND_EXCEPTION);
-        } else {
-            session.setAttribute("user", findUser.get());
         }
-
     }
 
     @Transactional
@@ -67,6 +61,23 @@ public class UserService {
         keywordRepository.deleteAllByUser(user);
         userRepository.deleteByUserId(userId);
     }
+
+    @Transactional
+    public UserProfileResponse getUserProfile(final String googleId){
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
+        Long userId = user.getUserId();
+        String nickName = user.getNickName();
+        String email = user.getEmail();
+        String major = user.getUserMajor().getValue();
+        List <String> keywords = keywordRepository.findAllByUserUserId(userId)
+                .stream()
+                .map(Keyword::getUserKeyword)
+                .collect(Collectors.toList());;
+
+        UserProfileResponse userProfileResponse = new UserProfileResponse(nickName, email, major, keywords);
+        return userProfileResponse;
+    }
+
 
     public void findAndSendEmail(Notice notice) {
         String noticeTitle = notice.getNoticeTitle();
