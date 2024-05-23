@@ -24,9 +24,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ApiResponse userLogin(@RequestBody LoginRequest request, HttpSession session) {
+    public ApiResponse userLogin(@RequestBody LoginRequest request) {
         try {
-            userService.userLogin(request, session);
+            userService.userLogin(request);
             return SuccessNonDataResponse.success(SuccessCode.LOGIN_SUCCESS);
         } catch (NotFoundUserException e) {
             return ErrorResponse.error(ErrorCode.USER_NOT_FOUND_EXCEPTION);
