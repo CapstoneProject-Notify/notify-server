@@ -42,7 +42,6 @@ springdoc:
       enabled: true
   cache:
     disabled: true
-
 server:
   servlet:
     session:
