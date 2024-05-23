@@ -9,6 +9,7 @@ import com.example.notifyserver.scrap.repository.ScrapRepository;
 import com.example.notifyserver.user.domain.User;
 import com.example.notifyserver.user.dto.request.LoginRequest;
 import com.example.notifyserver.user.dto.request.RegisterRequest;
+import com.example.notifyserver.user.dto.response.UserProfileResponse;
 import com.example.notifyserver.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,21 @@ public class UserService {
         keywordRepository.deleteAllByUser(user);
         userRepository.deleteByUserId(userId);
     }
-    
+
+    @Transactional
+    public UserProfileResponse getUserProfile(final String googleId){
+        User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
+        Long userId = user.getUserId();
+        String nickName = user.getNickName();
+        String email = user.getEmail();
+        String major = user.getUserMajor().getValue();
+        List <Keyword> keywords = keywordRepository.findAllByUserId(userId);
+
+        UserProfileResponse userProfileResponse = new UserProfileResponse(nickName, email, major, keywords);
+        return userProfileResponse;
+    }
+
+
     public void findAndSendEmail(Notice notice) {
         String noticeTitle = notice.getNoticeTitle();
         // 모든 키워드를 가져와서 사용자 ID에 해당하는 키워드 매핑
