@@ -1,9 +1,9 @@
 package com.example.notifyserver.crawler.controller;
 
 import com.example.notifyserver.common.constants.CrawlerConstants;
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
-import com.example.notifyserver.common.repository.NoticeRepository;
+import com.example.notifyserver.notice.repository.NoticeRepository;
 import com.example.notifyserver.crawler.service.CrawlerService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;

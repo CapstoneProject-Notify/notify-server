@@ -1,7 +1,6 @@
-package com.example.notifyserver.common.repository;
+package com.example.notifyserver.notice.repository;
 
-import com.example.notifyserver.common.domain.Notice;
-import com.example.notifyserver.user.domain.User;
+import com.example.notifyserver.notice.domain.Notice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

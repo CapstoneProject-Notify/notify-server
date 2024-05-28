@@ -1,6 +1,6 @@
 package com.example.notifyserver.crawler.service;
 
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import jakarta.transaction.Transactional;

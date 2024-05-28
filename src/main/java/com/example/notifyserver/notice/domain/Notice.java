@@ -1,5 +1,7 @@
-package com.example.notifyserver.common.domain;
+package com.example.notifyserver.notice.domain;
 
+import com.example.notifyserver.common.domain.BaseTimeEntity;
+import com.example.notifyserver.common.domain.NoticeType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -16,7 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Notice extends BaseTimeEntity{
+public class Notice extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,9 +1,9 @@
 package com.example.notifyserver.crawler.service;
 
 import com.example.notifyserver.common.constants.CrawlerConstants;
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
-import com.example.notifyserver.common.repository.NoticeRepository;
+import com.example.notifyserver.notice.repository.NoticeRepository;
 import com.example.notifyserver.crawler.dto.TitlesAndDates;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
