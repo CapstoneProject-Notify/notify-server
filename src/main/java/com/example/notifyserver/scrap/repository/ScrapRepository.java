@@ -50,4 +50,16 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
      */
     @Transactional
     Page<Scrap> findAllByUserUserIdOrderByNoticeDesc(long userId, Pageable pageable);
+    @Query("SELECT s FROM Scrap s WHERE s.user.userId = :userId AND s.notice.noticeId = :noticeId AND s.notice.noticeType = :noticeType")
+    Scrap findAllByUserIdAndNoticeIdAndType(@Param("userId") Long userId, @Param("noticeId") Long noticeId, @Param("noticeType") NoticeType noticeType);
+
+    /**
+     * 공지사항이 특정 사용자에 의해 스크랩되었는지 확인한다.
+     * @param userId 사용자 아이디
+     * @param noticeId 공지사항 아이디
+     * @param type 공지사항 종류
+     * @return 특정 사용자의 해당 공지사항 스크랩 여부
+     */
+    @Query("SELECT COUNT(s) > 0 FROM Scrap s WHERE s.user.userId = :userId AND s.notice.noticeId = :noticeId AND s.notice.noticeType = :type")
+    boolean existsByUserIdAndNoticeIdAndType(@Param("userId") Long userId, @Param("noticeId") Long noticeId, @Param("type") NoticeType type);
 }
