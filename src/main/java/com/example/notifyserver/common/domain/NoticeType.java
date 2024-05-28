@@ -35,6 +35,15 @@ public enum NoticeType {
     }
 
     /**
+     * url 경로로부터 받은 type을 ENUM 타입으로 가져온다.
+     * @param lowerCase url 경로로부터 받은 공지사항 타입
+     * @return 해당하는 공지사항 종류(ENUM 타입)
+     */
+    public static NoticeType matchWithLowerCase(String lowerCase){
+        return getTypeFromString(lowerCase.toUpperCase());
+    }
+
+    /**
      * 사용자로부터 입력받은 문자열로부터 ENUM 타입을 가져온다.
      * @param text 사용자로부터 입력 받은 문자열
      * @return 해당하는 공지사항 종류(ENUM 타입)

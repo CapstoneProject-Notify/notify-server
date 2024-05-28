@@ -1,6 +1,6 @@
 package com.example.notifyserver.crawler.repository;
 
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
