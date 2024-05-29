@@ -1,6 +1,6 @@
 package com.example.notifyserver.scrap.service;
 
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.user.domain.User;
 import org.springframework.data.domain.Page;

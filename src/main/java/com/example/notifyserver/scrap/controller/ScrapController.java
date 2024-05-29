@@ -1,13 +1,13 @@
 package com.example.notifyserver.scrap.controller;
 
 import com.example.notifyserver.common.constants.NoticeConstants;
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.dto.*;
 import com.example.notifyserver.common.exception.enums.ErrorCode;
 import com.example.notifyserver.common.exception.enums.SuccessCode;
 import com.example.notifyserver.common.exception.model.NotFoundException;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
-import com.example.notifyserver.common.repository.NoticeRepository;
+import com.example.notifyserver.notice.repository.NoticeRepository;
 import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.scrap.dto.DeleteScrapRequest;
 import com.example.notifyserver.scrap.dto.GetScrapsResponse;

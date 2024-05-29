@@ -1,6 +1,6 @@
 package com.example.notifyserver.scrap.domain;
 
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.user.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

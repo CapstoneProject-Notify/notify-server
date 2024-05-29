@@ -1,6 +1,6 @@
 package com.example.notifyserver.user.service;
 
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.common.service.EmailService;
 import com.example.notifyserver.keyword.domain.Keyword;

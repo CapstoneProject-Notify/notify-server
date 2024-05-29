@@ -1,6 +1,6 @@
 package com.example.notifyserver.scrap.service;
 
-import com.example.notifyserver.common.domain.Notice;
+import com.example.notifyserver.notice.domain.Notice;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.scrap.domain.Scrap;
 import com.example.notifyserver.scrap.repository.ScrapRepository;
