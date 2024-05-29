@@ -32,7 +32,7 @@ public class CrawlerController {
     /**
      * 공통 공지사항의 새 글을 가져와 DB에 저장한다.
      */
-    @Scheduled(cron = "0 */30 * * * *") // 매 30분마다 실행
+    // @Scheduled(cron = "0 */30 * * * *") // 매 30분마다 실행
     @Transactional
     public void getComNotice() throws InterruptedException, ParseException {
         // Headless 모드로 Chrome 실행
@@ -88,7 +88,7 @@ public class CrawlerController {
      * @throws InterruptedException
      * @throws ParseException
      */
-    @Scheduled(cron = "0 */30 * * * *") // 매 30분마다 실행
+    // @Scheduled(cron = "0 */30 * * * *") // 매 30분마다 실행
     @Transactional
     public void getAllMajorNotice() throws InterruptedException, ParseException {
         // Headless 모드로 Chrome 실행
