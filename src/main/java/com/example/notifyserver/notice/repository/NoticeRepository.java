@@ -21,6 +21,6 @@ public interface NoticeRepository<T extends Notice, ID extends Long> extends Jpa
      * @param pageable 조회할 페이지 정보
      * @return 페이지 정보 및 공지사항들
      */
-    @Query("SELECT n FROM Notice n WHERE n.noticeType = :noticeType")
+    @Query("SELECT n FROM Notice n WHERE n.noticeType = :noticeType ORDER BY n.noticeId DESC")
     Page<Notice> findAllByNoticeType(@Param("noticeType") NoticeType noticeType, Pageable pageable);
 }
