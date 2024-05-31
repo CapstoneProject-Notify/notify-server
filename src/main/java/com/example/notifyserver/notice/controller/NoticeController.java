@@ -36,7 +36,7 @@ public class NoticeController {
     @GetMapping()
     ApiResponse getNotices(@RequestHeader(value = "googleId", required = false) String googleId,
                            @RequestParam("type")String type, @RequestParam("page") int page){
-        if (googleId == null){ // 로그인 하지 않은 사용자
+        if ((googleId == null) || googleId.isEmpty()){ // 로그인 하지 않은 사용자
             try {
                 Page<NoticeResponse> findNoticesWithPaging = noticeService.getNoticesWithoutLogin(
                         NoticeType.matchWithLowerCase(type), page);
