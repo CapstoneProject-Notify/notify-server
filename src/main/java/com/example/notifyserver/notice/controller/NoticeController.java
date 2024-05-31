@@ -10,6 +10,7 @@ import com.example.notifyserver.notice.dto.NoticeResponse;
 import com.example.notifyserver.notice.service.NoticeService;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/notice")
+@Slf4j
 public class NoticeController {
 
     private final NoticeService noticeService;
@@ -41,8 +43,10 @@ public class NoticeController {
                 return getApiResponse(findNoticesWithPaging);
             }
             catch (ValidationException e) {
+                log.error(e.toString());
                 return ErrorResponse.error(ErrorCode.VALIDATION_REQUEST_MISSING_EXCEPTION);
             } catch (Exception e) {
+                log.error(e.toString());
                 return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
             }
         }else { // 로그인 한 사용자
@@ -52,8 +56,10 @@ public class NoticeController {
                 return getApiResponse(findNoticesWithPaging);
             }
             catch (ValidationException e) {
+                log.error(e.toString());
                 return ErrorResponse.error(ErrorCode.VALIDATION_REQUEST_MISSING_EXCEPTION);
             } catch (Exception e) {
+                log.error(e.toString());
                 return ErrorResponse.error(ErrorCode.INTERNAL_SERVER_EXCEPTION);
             }
         }
