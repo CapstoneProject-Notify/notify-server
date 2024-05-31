@@ -11,10 +11,10 @@ public class NoticeResponse {
     String title;
     String noticeDate;
     String url;
-    boolean isScrapped;
-    
     // Json 응답 시 is가 사라지는 것을 방지
     @JsonProperty("isScrapped")
+    boolean isScrapped;
+
     public boolean isScrapped() {
         return isScrapped;
     }
