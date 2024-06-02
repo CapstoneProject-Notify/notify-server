@@ -25,9 +25,8 @@ public class KafkaConsumer {
 
         // Kafka 메시지를 역직렬화한 List<Notice> 객체를 사용하여 원하는 작업을 수행
         for (Notice notice : notices) {
-            log.info("================ 새롭게 크롤링 된 게시물 제목: ================" + notice.getNoticeTitle());
-//            userService.findAndSendEmail(notice);
+            userService.findAndSendEmail(notice);
         }
-
+        log.info("================ 크롤링 된 게시물 이메일 작업 완료. ================");
     }
 }
