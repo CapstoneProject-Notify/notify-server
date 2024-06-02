@@ -11,5 +11,6 @@ public class KafkaConsumer {
     @KafkaListener(topics = "notify-crawler-topic", groupId = "notify")
     public void listen(String message) {
         log.info(message + "from Kafka");
+        log.warn("===================="+message + "from Kafka ====================");
     }
 }
