@@ -1,5 +1,6 @@
 package com.example.notifyserver.notice.repository;
 
+import com.example.notifyserver.common.domain.NoticeCategory;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.notice.domain.Notice;
 import feign.Param;
@@ -23,4 +24,13 @@ public interface NoticeRepository<T extends Notice, ID extends Long> extends Jpa
      */
     @Query("SELECT n FROM Notice n WHERE n.noticeType = :noticeType ORDER BY n.noticeId DESC")
     Page<Notice> findAllByNoticeType(@Param("noticeType") NoticeType noticeType, Pageable pageable);
+
+    /**
+     * 타입과 일치하는 모든 공지사항들을 페이지 번호에 맞게 조회한다.
+     * @param noticeType 공지사항 종류
+     * @param pageable 조회할 페이지 정보
+     * @return 페이지 정보 및 공지사항들
+     */
+    @Query("SELECT n FROM Notice n WHERE n.noticeType = :noticeType and n.noticeCategory = :noticeCategory ORDER BY n.noticeId DESC")
+    Page<Notice> findAllByNoticeTypeAndCategory(NoticeType noticeType, Pageable pageable, NoticeCategory noticeCategory);
 }
