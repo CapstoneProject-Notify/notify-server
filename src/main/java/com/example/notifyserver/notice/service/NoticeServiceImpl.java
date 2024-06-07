@@ -1,6 +1,7 @@
 package com.example.notifyserver.notice.service;
 
 import com.example.notifyserver.common.constants.NoticeConstants;
+import com.example.notifyserver.common.domain.NoticeCategory;
 import com.example.notifyserver.common.domain.NoticeType;
 import com.example.notifyserver.common.exception.model.NotFoundUserException;
 import com.example.notifyserver.notice.domain.Notice;
@@ -33,20 +34,28 @@ public class NoticeServiceImpl implements NoticeService{
      * 로그인 하지 않은 사용자가 공지사항을 조회한다.
      * @param type 공지사항 종류
      * @param pageNum 조회할 페이지 번호
+     * @param category 조회할 카테고리
      * @return 페이지 정보 및 공지사항들
      * @throws Exception 서버 내부 오류 및 유효하지 않은 값 입력 오류
      */
     @Override
-    public Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum) throws Exception {
+    public Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum, NoticeCategory category) throws Exception {
         Pageable pageable = PageRequest.of(pageNum-1, (int) NoticeConstants.PAGE_SIZE);
         try {
-            Page<Notice> findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+            Page<Notice> findNotices;
+            if(category == NoticeCategory.ALL){
+                findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+            }else {
+                findNotices = noticeRepository.findAllByNoticeTypeAndCategory(type, pageable,category);
+            }
             Page<NoticeResponse> noticeResponses = findNotices.map(findNotice -> new NoticeResponse(
                     findNotice.getNoticeId(),
                     findNotice.getNoticeTitle(),
                     findNotice.getNoticeDate(),
                     false,
-                    findNotice.getNoticeUrl()));
+                    findNotice.getNoticeUrl(),
+                    findNotice.getNoticeCategory().toString().toLowerCase()
+            ));
             return noticeResponses;
         }catch (NotFoundUserException e) {
             throw new ValidationException(VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
@@ -58,18 +67,23 @@ public class NoticeServiceImpl implements NoticeService{
 
     /**
      * 로그인한 사용자가 공지사항을 조회한다.
-     * @param googleId 사용자의 구글 아이디
      * @param type 공지사항 종류
      * @param pageNum 조회할 페이지 번호
+     * @param category 조회할 카테고리
      * @return 페이지 정보 및 공지사항들
      * @throws Exception 서버 내부 오류 및 유효하지 않은 값 입력 오류
      */
     @Override
-    public Page<NoticeResponse> getNoticesWithLogin(String googleId, NoticeType type, int pageNum) throws Exception {
+    public Page<NoticeResponse> getNoticesWithLogin(String googleId, NoticeType type, int pageNum, NoticeCategory category) throws Exception {
         User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
         Pageable pageable = PageRequest.of(pageNum-1, (int) NoticeConstants.PAGE_SIZE);
         try {
-            Page<Notice> findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+            Page<Notice> findNotices;
+            if(category == NoticeCategory.ALL){
+                findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+            }else {
+                findNotices = noticeRepository.findAllByNoticeTypeAndCategory(type, pageable,category);
+            }
             Page<NoticeResponse> noticeResponses = findNotices.map(findNotice -> {
                 boolean isScrapped = scrapRepository.existsByUserIdAndNoticeIdAndType(user.getUserId(), findNotice.getNoticeId(), type);
                 return new NoticeResponse(
@@ -77,7 +91,8 @@ public class NoticeServiceImpl implements NoticeService{
                         findNotice.getNoticeTitle(),
                         findNotice.getNoticeDate(),
                         isScrapped,
-                        findNotice.getNoticeUrl()
+                        findNotice.getNoticeUrl(),
+                        findNotice.getNoticeCategory().toString().toLowerCase()
                 );
             });
             return noticeResponses;

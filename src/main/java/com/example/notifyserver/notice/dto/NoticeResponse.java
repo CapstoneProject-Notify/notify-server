@@ -18,4 +18,5 @@ public class NoticeResponse {
     @JsonProperty("isScrapped")
     private boolean isScrapped;
     private String url;
+    private String category;
 }
