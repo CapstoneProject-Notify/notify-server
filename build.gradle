@@ -32,18 +32,6 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-    //Jsoup
-    implementation 'org.jsoup:jsoup:1.14.3'
-
-    // Selenium WebDriver
-    implementation 'org.seleniumhq.selenium:selenium-java:4.1.0'
-    // Chrome WebDriver
-    implementation 'io.github.bonigarcia:webdrivermanager:5.0.3'
-
-    // Kafka
-    implementation 'org.springframework.kafka:spring-kafka'
-    // 데이터 바인딩
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -55,10 +43,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     runtimeOnly 'com.mysql:mysql-connector-j'
-
-    //mail
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
-    implementation 'javax.mail:javax.mail-api:1.6.2'
 
     // Mockito 라이브러리 의존성 추가
     testImplementation 'org.mockito:mockito-core:3.12.4'
