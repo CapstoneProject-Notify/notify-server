@@ -1,6 +1,7 @@
 package com.example.notifyserver.notice.domain;
 
 import com.example.notifyserver.common.domain.BaseTimeEntity;
+import com.example.notifyserver.common.domain.NoticeCategory;
 import com.example.notifyserver.common.domain.NoticeType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +34,8 @@ public class Notice extends BaseTimeEntity implements Serializable {
 
     private Date noticeDate;
 
+    @Enumerated(EnumType.STRING)
+    private NoticeCategory noticeCategory;
 
     @Enumerated(EnumType.STRING)
     private NoticeType noticeType;
