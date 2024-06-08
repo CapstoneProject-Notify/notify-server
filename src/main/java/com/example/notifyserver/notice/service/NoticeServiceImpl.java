@@ -39,14 +39,22 @@ public class NoticeServiceImpl implements NoticeService{
      * @throws Exception 서버 내부 오류 및 유효하지 않은 값 입력 오류
      */
     @Override
-    public Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum, NoticeCategory category) throws Exception {
+    public Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum, NoticeCategory category, String search) throws Exception {
         Pageable pageable = PageRequest.of(pageNum-1, (int) NoticeConstants.PAGE_SIZE);
         try {
             Page<Notice> findNotices;
             if(category == NoticeCategory.ALL){
-                findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+                if (search == null || search.isEmpty()) {
+                    findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+                } else {
+                    findNotices = noticeRepository.findAllByNoticeTypeAndNoticeTitleContaining(type, search, pageable);
+                }
             }else {
-                findNotices = noticeRepository.findAllByNoticeTypeAndCategory(type, pageable,category);
+                if (search == null || search.isEmpty()) {
+                    findNotices = noticeRepository.findAllByNoticeTypeAndCategory(type, pageable, category);
+                } else {
+                    findNotices = noticeRepository.findAllByNoticeTypeAndNoticeCategoryAndNoticeTitleContaining(type, category, search, pageable);
+                }
             }
             Page<NoticeResponse> noticeResponses = findNotices.map(findNotice -> new NoticeResponse(
                     findNotice.getNoticeId(),
@@ -74,15 +82,23 @@ public class NoticeServiceImpl implements NoticeService{
      * @throws Exception 서버 내부 오류 및 유효하지 않은 값 입력 오류
      */
     @Override
-    public Page<NoticeResponse> getNoticesWithLogin(String googleId, NoticeType type, int pageNum, NoticeCategory category) throws Exception {
+    public Page<NoticeResponse> getNoticesWithLogin(String googleId, NoticeType type, int pageNum, NoticeCategory category, String search) throws Exception {
         User user = userRepository.findByGoogleId(googleId).orElseThrow(() -> new NotFoundUserException(USER_NOT_FOUND_EXCEPTION));
         Pageable pageable = PageRequest.of(pageNum-1, (int) NoticeConstants.PAGE_SIZE);
         try {
             Page<Notice> findNotices;
             if(category == NoticeCategory.ALL){
-                findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+                if (search == null || search.isEmpty()) {
+                    findNotices = noticeRepository.findAllByNoticeType(type, pageable);
+                } else {
+                    findNotices = noticeRepository.findAllByNoticeTypeAndNoticeTitleContaining(type, search, pageable);
+                }
             }else {
-                findNotices = noticeRepository.findAllByNoticeTypeAndCategory(type, pageable,category);
+                if (search == null || search.isEmpty()) {
+                    findNotices = noticeRepository.findAllByNoticeTypeAndCategory(type, pageable, category);
+                } else {
+                    findNotices = noticeRepository.findAllByNoticeTypeAndNoticeCategoryAndNoticeTitleContaining(type, category, search, pageable);
+                }
             }
             Page<NoticeResponse> noticeResponses = findNotices.map(findNotice -> {
                 boolean isScrapped = scrapRepository.existsByUserIdAndNoticeIdAndType(user.getUserId(), findNotice.getNoticeId(), type);

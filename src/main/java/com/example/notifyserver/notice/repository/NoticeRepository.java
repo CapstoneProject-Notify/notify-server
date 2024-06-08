@@ -33,4 +33,7 @@ public interface NoticeRepository<T extends Notice, ID extends Long> extends Jpa
      */
     @Query("SELECT n FROM Notice n WHERE n.noticeType = :noticeType and n.noticeCategory = :noticeCategory ORDER BY n.noticeId DESC")
     Page<Notice> findAllByNoticeTypeAndCategory(NoticeType noticeType, Pageable pageable, NoticeCategory noticeCategory);
+
+    Page<Notice> findAllByNoticeTypeAndNoticeTitleContaining(NoticeType noticeType, String search, Pageable pageable);
+    Page<Notice> findAllByNoticeTypeAndNoticeCategoryAndNoticeTitleContaining(NoticeType noticeType, NoticeCategory noticeCategory, String search, Pageable pageable);
 }
