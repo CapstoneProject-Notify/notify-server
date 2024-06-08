@@ -36,11 +36,11 @@ public class NoticeController {
      */
     @GetMapping()
     ApiResponse getNotices(@RequestHeader(value = "googleId", required = false) String googleId,
-                           @RequestParam("type")String type, @RequestParam("page") int page, @RequestParam("category")String category){
+                           @RequestParam("type")String type, @RequestParam("page") int page, @RequestParam("category")String category, @RequestParam(value = "search", required = false) String search){
         if ((googleId == null) || googleId.isEmpty()){ // 로그인 하지 않은 사용자
             try {
                 Page<NoticeResponse> findNoticesWithPaging = noticeService.getNoticesWithoutLogin(
-                        NoticeType.matchWithLowerCase(type), page, NoticeCategory.matchCategoryWithLowerCase(category));
+                        NoticeType.matchWithLowerCase(type), page, NoticeCategory.matchCategoryWithLowerCase(category), search);
                 return getApiResponse(findNoticesWithPaging);
             }
             catch (ValidationException e) {
@@ -53,7 +53,7 @@ public class NoticeController {
         }else { // 로그인 한 사용자
             try {
                 Page<NoticeResponse> findNoticesWithPaging = noticeService.getNoticesWithLogin(
-                        googleId, NoticeType.matchWithLowerCase(type), page, NoticeCategory.matchCategoryWithLowerCase(category));
+                        googleId, NoticeType.matchWithLowerCase(type), page, NoticeCategory.matchCategoryWithLowerCase(category), search);
                 return getApiResponse(findNoticesWithPaging);
             }
             catch (ValidationException e) {

@@ -17,7 +17,7 @@ public interface NoticeService {
      * @return 페이지 정보 및 공지사항들
      * @throws Exception 서버 내부 오류 및 유효하지 않은 값 입력 오류
      */
-    Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum, NoticeCategory category) throws Exception;
+    Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum, NoticeCategory category, String search) throws Exception;
 
     /**
      * 로그인한 사용자가 공지사항을 조회한다.
@@ -27,6 +27,6 @@ public interface NoticeService {
      * @return 페이지 정보 및 공지사항들
      * @throws Exception 서버 내부 오류 및 유효하지 않은 값 입력 오류
      */
-    Page<NoticeResponse> getNoticesWithLogin(String googleId, NoticeType type, int pageNum, NoticeCategory category) throws Exception;
+    Page<NoticeResponse> getNoticesWithLogin(String googleId, NoticeType type, int pageNum, NoticeCategory category, String search) throws Exception;
 
 }
