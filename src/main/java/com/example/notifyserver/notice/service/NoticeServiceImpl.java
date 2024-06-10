@@ -14,6 +14,7 @@ import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import static com.example.notifyserver.common.exception.enums.ErrorCode.*;
@@ -40,7 +41,7 @@ public class NoticeServiceImpl implements NoticeService{
      */
     @Override
     public Page<NoticeResponse> getNoticesWithoutLogin(NoticeType type, int pageNum, NoticeCategory category, String search) throws Exception {
-        Pageable pageable = PageRequest.of(pageNum-1, (int) NoticeConstants.PAGE_SIZE);
+        Pageable pageable = PageRequest.of(pageNum - 1, (int) NoticeConstants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "noticeDate"));
         try {
             Page<Notice> findNotices;
             if(category == NoticeCategory.ALL){
